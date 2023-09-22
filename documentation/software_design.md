@@ -39,58 +39,139 @@ There is only one possible use case when interacting with CurrCalc. The "Convert
 The exchangesrate API is a secondary actor in this use case as CurrCalc must fetch the currency information from it.
 
 ### Use Case Descriptions
-|||
-|---|---|
-| Title 				| 	Convert Currency |
-| Description 			| 	The user selects the initial and target currencies, and types in an amount. Then CurrCalc converts the amount from the initial currency into the target currency. The currency information is fetched from an external API. |
-| Actor(s) 				| 	User, exchangereates API |
-| Goal 					| 	Conversion of a specified amount of money from one currency into another using up-to-date currency data. |
-| Precondition(s) 		| 	CurrCalc has been started by the user. |
-| Basic Flow 			| 	1. CurrCalc sends a HTTP GET request to the exchangerates API to retrieve the list of available currency names
-								- a. The API responds with a JSON file containing names of all available currencies
-							2. CurrCalc outputs a numbered list of currency names and prompts the user to pick one for the initial currency
-	        					- a. The user types in the number of the desired initial currency
-	                				- i. CurrCalc confirms the selection
-							3. CurrCalc sends a HTTP GET request to the exchangerates API to retrieve the details to the initial currency
-	        					- a. The API responds with a JSON file containing the details to the initial currency, including the exchange rates
-							4. CurrCalc prompts the user to specify the amount that is to be converted
-	        					- a. The user types in the desired amount as a decimal number
-	                				- i. CurrCalc confirms the selection
-							5. CurrCalc outputs a numbered list of currency names and prompts the user to pick one for the target currency
-	        					- a. The user types in the number of the desired target currency
-	                				- i. CurrCalc confirms the selection
-							6. CurrCal converts the specified amount from the initial currency into the target currency
-							7. The program outputs the result of the calculation
-							8. CurrCalc terminates |
-| Post Condition(s) 	| Conversion has been completed. CurrCalc program has been terminated. |
-| Alternative Flow(s)	| 	In 1.a: The API responds with a status code 500 or 503
-	        					- a. CurrCalc retries the request three more times in intervals of three seconds
-	                				- i. In case of a successful request (status code 200) CurrCalc continues - back to 1.a in basic flow
-	                				- ii. In case all the attempts fail, CurrCalc informs the user of the situation and offers possible solutions
-	                        			- i. CurrCalc terminates
-	
-							In 1.a: The API responds with a status code other than 200, 500, or 503
-	        					- a. CurrCalc informs the user of the situation and offers possible solutions
-	                				- i. CurrCalc terminates
-	
-							In 2.a: The user types in an integer that is not on the list, a decimal number, a character, or a string
-	        					- a. CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 2 in basic flow
-	
-							In 3.a: The API responds with a status code 404
-	        					- a. CurrCalc retries the request three more times in intervals of three seconds
-	                				- i. In case of a successful request (status code 200) CurrCalc continues - back to 3.a in basic flow
-	                				- ii. In case all the attempts fail, CurrCalc informs the user of the situation and offers possible solutions
-	                        			- i. CurrCalc terminates
-	
-							In 3.a: The API responds with a status code other than 200 and 404
-	        					- a. CurrCalc informs the user of the situation and offers possible solutions
-	                				- i. CurrCalc terminates
-	
-							In 4.a: The user types in a positive integer 
-	        					- a. CurrCalc converts the integer into a decimal number and confirms the selection - proceed with 4.a.a in basic flow
-	
-							In 4.a: The user types in a negative decimal number, a negative integer, a character, or a string
-	        					- a. CurrCalc responds with a prompt to type in an unsigned number for the sum - back to 4.a in basic flow
-	
-							In 5.a: The user types in an integer that is not on the list, a decimal number, a character, or a string
-	        					- a. CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 5 in basic flow |
+
+<table>
+  <tr>
+    <td>Title</td>
+    <td>Convert Currency</td>
+  </tr>
+  <tr>
+    <td>Description</td>
+    <td>The user selects the initial and target currencies, and types in an amount. Then CurrCalc converts the amount from the initial currency into the target currency. The currency information is fetched from an external API.</td>
+  </tr>
+  <tr>
+    <td>Actor(s)</td>
+    <td>User, exchangereates API</td>
+  </tr>
+  <tr>
+    <td>Goal</td>
+    <td>Conversion of a specified amount of money from one currency into another using up-to-date currency data.</td>
+  </tr>
+  <tr>
+    <td>Preconditions(s)</td>
+    <td>CurrCalc has been started by the user.</td>
+  </tr>
+  <tr>
+    <td>Basic Flow</td>
+    <td>
+		<ol type="1">
+			<li>CurrCalc sends a HTTP GET request to the exchangerates API to retrieve the list of available currency names
+				<ol type="a">
+					<li>The API responds with a JSON file containing names of all available currencies</li>
+				</ol>
+			</li>
+			<li>CurrCalc outputs a numbered list of currency names and prompts the user to pick one for the initial currency
+				<ol type="a">
+					<li>The user types in the number of the desired initial currency
+						<ol type="i">
+							<li>CurrCalc confirms the selection</li>
+						</ol>
+					</li>
+				</ol>
+			</li>
+			<li>CurrCalc sends a HTTP GET request to the exchangerates API to retrieve the details to the initial currency
+				<ol type="a">
+					<li>The API responds with a JSON file containing the details to the initial currency, including the exchange rates</li>
+				</ol>
+			</li>
+			<li>CurrCalc prompts the user to specify the amount that is to be converted
+				<ol type="a">
+					<li>The user types in the desired amount as a decimal number
+						<ol type="i">
+							<li>CurrCalc confirms the selection</li>
+						</ol>
+					</li>
+				</ol>
+			</li>
+			<li>CurrCalc outputs a numbered list of currency names and prompts the user to pick one for the target currency
+				<ol type="a">
+					<li>The user types in the number of the desired target currency
+						<ol type="i">
+							<li>CurrCalc confirms the selection</li>
+						</ol>
+					</li>
+				</ol>
+			</li>
+			<li>CurrCal converts the specified amount from the initial currency into the target currency</li>
+			<li>The program outputs the result of the calculation</li>
+			<li>CurrCalc terminates</li>
+		</ol>
+	</td>
+  </tr>
+  <tr>
+    <td>Post Condition(s)</td>
+    <td>Conversion has been completed. CurrCalc program has been terminated.</td>
+  </tr>
+  <tr>
+    <td>Alternative Flow(s)</td>
+	<td>
+		In 1.a: The API responds with a status code 500 or 503
+		<ol type="a">
+			<li>CurrCalc retries the request three more times in intervals of three seconds
+				<ol type="i">
+					<li>In case of a successful request (status code 200) CurrCalc continues - back to 1.a in basic flow</li>
+					<li>In case all the attempts fail, CurrCalc informs the user of the situation and offers possible solutions
+						<ol type="i">
+							<li>CurrCalc terminates</li>
+						</ol>
+					</li>
+				</ol>
+			</li>
+		</ol></br>
+		In 1.a: The API responds with a status code other than 200, 500, or 503
+		<ol type="a">
+			<li>CurrCalc informs the user of the situation and offers possible solutions
+				<ol type="i">
+					<li>CurrCalc terminates</li>
+				</ol>
+			</li>
+		</ol></br>
+		In 2.a: The user types in an integer that is not on the list, a decimal number, a character, or a string
+		<ol type="a">
+			<li>CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 2 in basic flow</li>
+		</ol></br>
+		In 3.a: The API responds with a status code 500 or 503
+		<ol type="a">
+			<li>CurrCalc retries the request three more times in intervals of three seconds
+				<ol type="i">
+					<li>CurrCalc retries the request three more times in intervals of three seconds</li>
+					<li>In case all the attempts fail, CurrCalc informs the user of the situation and offers possible solutions
+						<ol type="i">
+							<li>CurrCalc terminates</li>
+						</ol>
+					</li>
+				</ol>
+			</li>
+		</ol></br>
+		In 3.a: The API responds with a status code other than 200, 500, or 503
+		<ol type="a">
+			<li>CurrCalc informs the user of the situation and offers possible solutions
+				<ol type="i">
+					<li>CurrCalc terminates</li>
+				</ol>
+			</li>
+		</ol></br>
+		In 4.a: The user types in a positive integer
+		<ol type="a">
+			<li>CurrCalc converts the integer into a decimal number and confirms the selection - proceed with 4.a.a in basic flow</li>
+		</ol></br>
+		In 4.a: The user types in a negative decimal number, a negative integer, a character, or a string
+		<ol type="a">
+			<li>CurrCalc responds with a prompt to type in an unsigned number for the sum - back to 4.a in basic flow</li>
+		</ol></br>
+		In 5.a: The user types in an integer that is not on the list, a decimal number, a character, or a string
+		<ol type="a">
+			<li>CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 5 in basic flow</li>
+		</ol>
+	</td>
+</table>
