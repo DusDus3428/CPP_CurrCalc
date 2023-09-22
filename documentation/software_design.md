@@ -25,7 +25,7 @@ This file contains all the documentation to CurrCalc's design. This includes fun
 
 ## Rough Overview
 
-![CurrCalc Rough Overview](https://github.com/DusDus3428/CPP_CurrCalc/blob/feature/01_design/documentation/images/diagrams/01_CurrCalc-RoughOverview.png "CurrCalc Rough Overview")
+![CurrCalc Rough Overview](https://github.com/DusDus3428/CPP_CurrCalc/blob/feature/01_design/documentation/images/diagrams/01_CurrCalc_RoughOverview.png "CurrCalc Rough Overview")
 
 The flow is as follows: a user interacts with the CurrCalc program by selecting the initial and target currencies and providing an amount that is to be converted. The list of available currency names and the details for the selected initial currency, which includes the currency rates, are requested from the external exchangesrates API. In case of a success, the API will respond with status code 200 and the requested data. The REST protocol will be used for the communication between CurrCalc and the exchangerates API.
 
@@ -33,7 +33,7 @@ The flow is as follows: a user interacts with the CurrCalc program by selecting 
 
 ### Use Case Diagram
 
-![CurrCalc Use Case Diagram](https://github.com/DusDus3428/CPP_CurrCalc/blob/feature/01_design/documentation/images/diagrams/02_CurrCalc-UseCaseDiagram.png "CurrCalc Use Case Diagram")
+![CurrCalc Use Case Diagram](https://github.com/DusDus3428/CPP_CurrCalc/blob/feature/01_design/documentation/images/diagrams/02_CurrCalc_UseCaseDiagram.png "CurrCalc Use Case Diagram")
 
 There is only one possible use case when interacting with CurrCalc. The "Convert Currency" use case is triggered when the user starts the program, therefore the user is the primary actor. 
 The exchangesrate API is a secondary actor in this use case as CurrCalc must fetch the currency information from it.
@@ -175,3 +175,15 @@ The exchangesrate API is a secondary actor in this use case as CurrCalc must fet
 		</ol>
 	</td>
 </table>
+
+## Class Diagram
+
+![CurrCalc Class Diagram](https://github.com/DusDus3428/CPP_CurrCalc/blob/feature/01_design/documentation/images/diagrams/03_CurrCalc_ClassDiagram.png "CurrCalc Class Diagram")
+
+There are only two classes: CurrencyDetail and ExchangeRate. 
+CurrencyDetail holds two public properties, a string called "name" for the name of the currency, and a list of ExchangeRate objects called "exchangeRates". Due to the latter a composition relationship has been identified to the ExchangeRate class. CurrencyDetail also has the public "convertAmount" method, which takes the conversion amount (a double), and the name of the target currency as arguments. The method will leverage the exchangeRates porperty to conduct the conversion.
+ExchangeRate also holds two public properties, a string called "currencyName" for the name of the currency, and a double called "rate" for the actual exchange rate.
+
+## Activity Diagram
+
+![CurrCalc Activity Diagram for Convert Currency](https://github.com/DusDus3428/CPP_CurrCalc/blob/feature/01_design/documentation/images/diagrams/04_CurrCalc_ActivityDiagram_ConvertCurrency.png "CurrCalc Activity Diagram for Convert Currency")
