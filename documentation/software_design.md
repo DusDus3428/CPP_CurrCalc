@@ -39,7 +39,8 @@ There is only one possible use case when interacting with CurrCalc. The "Convert
 The exchangesrate API is a secondary actor in this use case as CurrCalc must fetch the currency information from it.
 
 ### Use Case Descriptions
-
+|||
+|---|---|
 | Title 				| 	Convert Currency |
 | Description 			| 	The user selects the initial and target currencies, and types in an amount. Then CurrCalc converts the amount from the initial currency into the target currency. The currency information is fetched from an external API. |
 | Actor(s) 				| 	User, exchangereates API |
