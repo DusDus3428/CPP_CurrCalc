@@ -2,6 +2,10 @@
 
 This file contains all the documentation to CurrCalc's design. This includes functional requirements, non-functional requirements, and architectural diagrams and descriptions.
 
+# Premise
+
+CurrCalc is a C++ program written in C++20. To begin with it will remain strictly a console application. 
+
 # Requirements
 
 ## Functional Requirements
@@ -35,8 +39,7 @@ The flow is as follows: a user interacts with the CurrCalc program by selecting 
 
 ![CurrCalc Use Case Diagram](https://github.com/DusDus3428/CPP_CurrCalc/blob/feature/01_design/documentation/images/diagrams/02_CurrCalc_UseCaseDiagram.png "CurrCalc Use Case Diagram")
 
-There is only one possible use case when interacting with CurrCalc. The "Convert Currency" use case is triggered when the user starts the program, therefore the user is the primary actor. 
-The exchangesrate API is a secondary actor in this use case as CurrCalc must fetch the currency information from it.
+There is only one possible use case when interacting with CurrCalc. The "Convert Currency" use case is triggered when the user starts the program, therefore the user is the primary actor. The exchangesrate API is a secondary actor in this use case as CurrCalc must fetch the currency information from it.
 
 ### Use Case Descriptions
 
@@ -127,7 +130,7 @@ The exchangesrate API is a secondary actor in this use case as CurrCalc must fet
 					</li>
 				</ol>
 			</li>
-		</ol></br>
+		</ol><br/>
 		In 1.a: The API responds with a status code other than 200, 500, or 503
 		<ol type="a">
 			<li>CurrCalc informs the user of the situation and offers possible solutions
@@ -135,11 +138,11 @@ The exchangesrate API is a secondary actor in this use case as CurrCalc must fet
 					<li>CurrCalc terminates</li>
 				</ol>
 			</li>
-		</ol></br>
+		</ol><br/>
 		In 2.a: The user types in an integer that is not on the list, a decimal number, a character, or a string
 		<ol type="a">
 			<li>CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 2 in basic flow</li>
-		</ol></br>
+		</ol><br/>
 		In 3.a: The API responds with a status code 500 or 503
 		<ol type="a">
 			<li>CurrCalc retries the request three more times in intervals of three seconds
@@ -152,7 +155,7 @@ The exchangesrate API is a secondary actor in this use case as CurrCalc must fet
 					</li>
 				</ol>
 			</li>
-		</ol></br>
+		</ol><br/>
 		In 3.a: The API responds with a status code other than 200, 500, or 503
 		<ol type="a">
 			<li>CurrCalc informs the user of the situation and offers possible solutions
@@ -160,15 +163,15 @@ The exchangesrate API is a secondary actor in this use case as CurrCalc must fet
 					<li>CurrCalc terminates</li>
 				</ol>
 			</li>
-		</ol></br>
+		</ol><br/>
 		In 4.a: The user types in a positive integer
 		<ol type="a">
 			<li>CurrCalc converts the integer into a decimal number and confirms the selection - proceed with 4.a.a in basic flow</li>
-		</ol></br>
+		</ol><br/>
 		In 4.a: The user types in a negative decimal number, a negative integer, a character, or a string
 		<ol type="a">
 			<li>CurrCalc responds with a prompt to type in an unsigned number for the sum - back to 4.a in basic flow</li>
-		</ol></br>
+		</ol><br/>
 		In 5.a: The user types in an integer that is not on the list, a decimal number, a character, or a string
 		<ol type="a">
 			<li>CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 5 in basic flow</li>
@@ -180,10 +183,16 @@ The exchangesrate API is a secondary actor in this use case as CurrCalc must fet
 
 ![CurrCalc Class Diagram](https://github.com/DusDus3428/CPP_CurrCalc/blob/feature/01_design/documentation/images/diagrams/03_CurrCalc_ClassDiagram.png "CurrCalc Class Diagram")
 
-There are only two classes: CurrencyDetail and ExchangeRate. 
-CurrencyDetail holds two public properties, a string called "name" for the name of the currency, and a list of ExchangeRate objects called "exchangeRates". Due to the latter a composition relationship has been identified to the ExchangeRate class. CurrencyDetail also has the public "convertAmount" method, which takes the conversion amount (a double), and the name of the target currency as arguments. The method will leverage the exchangeRates porperty to conduct the conversion.
+There are only two classes: CurrencyDetail and ExchangeRate.<br/> 
+CurrencyDetail holds two public properties, a string called "name" for the name of the currency, and a list of ExchangeRate objects called "exchangeRates". The latter leads to a composition relationship from CurrencyDetail to ExchangeRate. CurrencyDetail also has the public "convertAmount" method, which takes a specified conversion amount, and the name of the target currency as arguments. The method will leverage the exchangeRates property to conduct the conversion.<br/>
 ExchangeRate also holds two public properties, a string called "currencyName" for the name of the currency, and a double called "rate" for the actual exchange rate.
 
 ## Activity Diagram
 
 ![CurrCalc Activity Diagram for Convert Currency](https://github.com/DusDus3428/CPP_CurrCalc/blob/feature/01_design/documentation/images/diagrams/04_CurrCalc_ActivityDiagram_ConvertCurrency.png "CurrCalc Activity Diagram for Convert Currency")
+
+The activity diagram above showcases the main flow of the program.<br/> 
+Once CurrCalc is started, the program will send a REST request to the exchangerates API to retrieve the list of the names of available currencies. Once the API sends this to CurrCalc, the user must choose one of the currencies from the numbered list to use for the initial currency. If the user decides to make an input that is not one of the numbers on the list, they will be prompted to do so again until a valid selection has been made.<br/>
+After the selection has been made, CurrCalc uses it to request the full details of the currency, including the exchangerates for the other currencies. Once the API sends these to CurrCalc, the user is prompted to type in the amount that is to be converted. If the user types in something other than a positive integer or positive floating point number, they will be prompted to do so again until a valid number has been provided. Side note: positive integer numbers are converted into floating point numbers.<br/>
+Next, the user must choose the target currency from a numbered list. This list is gathered from the initial currency's exchange rates. If the user decides to make a selection that is not one of the numbers on the list, they will be prompted to do so again until a valid selection has been made.<br/>
+Once this is done, the specified amount will be converted from the initial currency into the target one and the results will be printed to the console. Then the CurrCalc program is terminated. 
