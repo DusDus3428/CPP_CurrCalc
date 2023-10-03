@@ -4,8 +4,4 @@ CurrCalc is a small C++ program that converts an amount of money from one curren
 This is my first real C++ project and I intend to use it as a practice ground to learn about C++. I will document my progress in a series of blog posts that you can find on my website: . Feel free to join the discussion there!
 
 # Software Design
-You can find the documentation to the software's design [here](./documentation/software_design.md).
-
-
-
-
+You can find the documentation to the software's design [here](./documentation/README.md).

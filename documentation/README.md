@@ -79,37 +79,37 @@ Here is a classical use case description for the Convert Currency use case:
     <td>
 		<ol type="1">
 			<li>CurrCalc sends a HTTP GET request to the exchangerates API to retrieve the list of available currency names
-				<ol type="a">
+				<ol type="i">
 					<li>The API responds with a JSON file containing names of all available currencies</li>
 				</ol>
 			</li>
 			<li>CurrCalc outputs a numbered list of currency names and prompts the user to pick one for the initial currency
-				<ol type="a">
+				<ol type="i">
 					<li>The user types in the number of the desired initial currency
-						<ol type="i">
+						<ol type="a">
 							<li>CurrCalc confirms the selection</li>
 						</ol>
 					</li>
 				</ol>
 			</li>
 			<li>CurrCalc sends a HTTP GET request to the exchangerates API to retrieve the details to the initial currency
-				<ol type="a">
+				<ol type="i">
 					<li>The API responds with a JSON file containing the details to the initial currency, including the exchange rates</li>
 				</ol>
 			</li>
 			<li>CurrCalc prompts the user to specify the amount that is to be converted
-				<ol type="a">
+				<ol type="i">
 					<li>The user types in the desired amount as a decimal number
-						<ol type="i">
+						<ol type="a">
 							<li>CurrCalc confirms the selection</li>
 						</ol>
 					</li>
 				</ol>
 			</li>
 			<li>CurrCalc outputs a numbered list of currency names and prompts the user to pick one for the target currency
-				<ol type="a">
+				<ol type="i">
 					<li>The user types in the number of the desired target currency
-						<ol type="i">
+						<ol type="a">
 							<li>CurrCalc confirms the selection</li>
 						</ol>
 					</li>
@@ -129,12 +129,12 @@ Here is a classical use case description for the Convert Currency use case:
     <td>Alternative Flow(s)</td>
 	<td>
 		In 1.a: The API responds with a status code 500 or 503
-		<ol type="a">
+		<ol type="i">
 			<li>CurrCalc retries the request three more times in intervals of three seconds
-				<ol type="i">
+				<ol type="a">
 					<li>In case of a successful request (status code 200) CurrCalc continues - back to 1.a in basic flow</li>
 					<li>In case all the attempts fail, CurrCalc informs the user of the situation and offers possible solutions
-						<ol type="i">
+						<ol type="a">
 							<li>CurrCalc terminates</li>
 						</ol>
 					</li>
@@ -142,24 +142,24 @@ Here is a classical use case description for the Convert Currency use case:
 			</li>
 		</ol><br/>
 		In 1.a: The API responds with a status code other than 200, 500, or 503
-		<ol type="a">
+		<ol type="i">
 			<li>CurrCalc informs the user of the situation and offers possible solutions
-				<ol type="i">
+				<ol type="a">
 					<li>CurrCalc terminates</li>
 				</ol>
 			</li>
 		</ol><br/>
 		In 2.a: The user types in an integer that is not on the list, a decimal number, a character, or a string
-		<ol type="a">
+		<ol type="i">
 			<li>CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 2 in basic flow</li>
 		</ol><br/>
 		In 3.a: The API responds with a status code 500 or 503
-		<ol type="a">
+		<ol type="i">
 			<li>CurrCalc retries the request three more times in intervals of three seconds
-				<ol type="i">
+				<ol type="a">
 					<li>CurrCalc retries the request three more times in intervals of three seconds</li>
 					<li>In case all the attempts fail, CurrCalc informs the user of the situation and offers possible solutions
-						<ol type="i">
+						<ol type="a">
 							<li>CurrCalc terminates</li>
 						</ol>
 					</li>
@@ -167,23 +167,23 @@ Here is a classical use case description for the Convert Currency use case:
 			</li>
 		</ol><br/>
 		In 3.a: The API responds with a status code other than 200, 500, or 503
-		<ol type="a">
+		<ol type="i">
 			<li>CurrCalc informs the user of the situation and offers possible solutions
-				<ol type="i">
+				<ol type="a">
 					<li>CurrCalc terminates</li>
 				</ol>
 			</li>
 		</ol><br/>
 		In 4.a: The user types in a positive integer
-		<ol type="a">
+		<ol type="i">
 			<li>CurrCalc converts the integer into a decimal number and confirms the selection - proceed with 4.a.a in basic flow</li>
 		</ol><br/>
 		In 4.a: The user types in a negative decimal number, a negative integer, a character, or a string
-		<ol type="a">
+		<ol type="i">
 			<li>CurrCalc responds with a prompt to type in an unsigned number for the sum - back to 4.a in basic flow</li>
 		</ol><br/>
 		In 5.a: The user types in an integer that is not on the list, a decimal number, a character, or a string
-		<ol type="a">
+		<ol type="i">
 			<li>CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 5 in basic flow</li>
 		</ol>
 	</td>
