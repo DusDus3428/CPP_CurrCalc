@@ -12,6 +12,7 @@ FetchContent_MakeAvailable(cpr)
 # Set the source files that should be part of the CurrCalc library
 set(SOURCES 
     currency_detail/currency_detail.cpp
+    exchange_rate/exchange_rate.cpp
     exchangerates_api_client/exchangerates_api_client.cpp
     util/input_output.cpp
 )
@@ -23,7 +24,7 @@ set(SOURCES
 # First, the Curr_Calc library should be created with the specified source files
 # Then the header files, located within a separate include directory, will be included
 # Then we link the CPR library becuase it will be used by the CurrCalc lib
-add_library(CurrCalc_Lib SHARED ${SOURCES})
+add_library(CurrCalc_Lib STATIC ${SOURCES})
 target_include_directories(CurrCalc_Lib PUBLIC include)
 target_link_libraries(CurrCalc_Lib cpr::cpr)
 

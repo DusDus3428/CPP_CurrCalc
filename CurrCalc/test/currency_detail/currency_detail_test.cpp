@@ -1,4 +1,5 @@
 #include <currency_detail/currency_detail.h>
+#include <exchange_rate/exchange_rate.h>
 #include <gtest/gtest.h>
 
 TEST(CalculatorTest, AddTwoValues)
