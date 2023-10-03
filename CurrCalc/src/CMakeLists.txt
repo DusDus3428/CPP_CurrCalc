@@ -1,8 +1,7 @@
+project(CurrCalc_Application)
+
 set(SOURCES 
-    calculator/Calculator.cpp
-)
-set(HEADERS 
-    calculator/Calculator.h
+    calculator/calculator.cpp
 )
 
 include(FetchContent)
@@ -13,7 +12,8 @@ FetchContent_Declare(
 ) # Find the latest release here https://github.com/libcpr/cpr/releases
 FetchContent_MakeAvailable(cpr)
 
-add_library(CurrCalc_Lib_For_Tests STATIC ${SOURCES} ${HEADERS})
+add_library(CurrCalc_Lib STATIC ${SOURCES})
+target_include_directories(CurrCalc_Lib PUBLIC include)
 
 add_executable(CurrCalc_Application main.cpp)
-target_link_libraries(CurrCalc_Application CurrCalc_Lib_For_Tests)
+target_link_libraries(CurrCalc_Application CurrCalc_Lib)

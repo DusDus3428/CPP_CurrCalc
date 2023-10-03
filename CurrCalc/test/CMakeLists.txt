@@ -1,3 +1,5 @@
+project(CurrCalc_Test)
+
 include(FetchContent)
 FetchContent_Declare(
     googletest
@@ -8,14 +10,14 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 set(SOURCES 
-    calculator/CalculatorTest.cpp
+    calculator/calculator_test.cpp
 )
 
 add_executable(CurrCalc_Test ${SOURCES})
 
 target_link_libraries(CurrCalc_Test PUBLIC
 gtest_main
-CurrCalc_Lib_For_Tests
+CurrCalc_Lib
 )
 
 if (WIN32)

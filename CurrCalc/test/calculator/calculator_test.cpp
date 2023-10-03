@@ -1,4 +1,4 @@
-#include "../../src/calculator/Calculator.h"
+#include <calculator/calculator.h>
 #include <gtest/gtest.h>
 
 TEST(CalculatorTest, AddTwoValues)
