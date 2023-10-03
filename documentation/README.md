@@ -2,6 +2,17 @@
 
 This file contains all the documentation to CurrCalc's design. This includes functional requirements, non-functional requirements, and architectural diagrams and descriptions.
 
+## Table of Contents
+1. **[Premise](#premise)**</br>
+2. **[Requirements](#requirements)**</br>
+  2.1 **[Functional Requirements](#functional-requirements)**</br>
+  2.2 **[Non-Functional Requirements](#non-functional-requirements)**</br>
+3. **[Architecture](#architecture)**</br>
+  3.1 **[Rough Overview](#rough-overview)**</br>
+  3.2 **[Use Cases](#use-cases)**</br>
+  3.3 **[Class Diagram](#class-diagram)**</br>
+  3.4 **[Activity Diagram](#activity-diagram)**</br>
+
 # Premise
 
 CurrCalc is a C++ program written in C++20. To begin with it will remain strictly a console application. 
@@ -40,8 +51,7 @@ The flow is as follows: a user interacts with the CurrCalc program by selecting 
 ![CurrCalc Use Case Diagram](https://github.com/DusDus3428/CPP_CurrCalc/blob/feature/01_design/documentation/images/diagrams/02_CurrCalc_UseCaseDiagram.png "CurrCalc Use Case Diagram")
 
 There is only one possible use case when interacting with CurrCalc. The "Convert Currency" use case is triggered when the user starts the program, therefore the user is the primary actor. The exchangesrate API is a secondary actor in this use case as CurrCalc must fetch the currency information from it.
-
-### Use Case Descriptions
+Here is a classical use case description for the Convert Currency use case:
 
 <table>
   <tr>
@@ -69,37 +79,37 @@ There is only one possible use case when interacting with CurrCalc. The "Convert
     <td>
 		<ol type="1">
 			<li>CurrCalc sends a HTTP GET request to the exchangerates API to retrieve the list of available currency names
-				<ol type="a">
+				<ol type="i">
 					<li>The API responds with a JSON file containing names of all available currencies</li>
 				</ol>
 			</li>
 			<li>CurrCalc outputs a numbered list of currency names and prompts the user to pick one for the initial currency
-				<ol type="a">
+				<ol type="i">
 					<li>The user types in the number of the desired initial currency
-						<ol type="i">
+						<ol type="a">
 							<li>CurrCalc confirms the selection</li>
 						</ol>
 					</li>
 				</ol>
 			</li>
 			<li>CurrCalc sends a HTTP GET request to the exchangerates API to retrieve the details to the initial currency
-				<ol type="a">
+				<ol type="i">
 					<li>The API responds with a JSON file containing the details to the initial currency, including the exchange rates</li>
 				</ol>
 			</li>
 			<li>CurrCalc prompts the user to specify the amount that is to be converted
-				<ol type="a">
+				<ol type="i">
 					<li>The user types in the desired amount as a decimal number
-						<ol type="i">
+						<ol type="a">
 							<li>CurrCalc confirms the selection</li>
 						</ol>
 					</li>
 				</ol>
 			</li>
 			<li>CurrCalc outputs a numbered list of currency names and prompts the user to pick one for the target currency
-				<ol type="a">
+				<ol type="i">
 					<li>The user types in the number of the desired target currency
-						<ol type="i">
+						<ol type="a">
 							<li>CurrCalc confirms the selection</li>
 						</ol>
 					</li>
@@ -118,62 +128,62 @@ There is only one possible use case when interacting with CurrCalc. The "Convert
   <tr>
     <td>Alternative Flow(s)</td>
 	<td>
-		In 1.a: The API responds with a status code 500 or 503
-		<ol type="a">
+		In 1.i: The API responds with a status code 500 or 503
+		<ol type="1">
 			<li>CurrCalc retries the request three more times in intervals of three seconds
 				<ol type="i">
-					<li>In case of a successful request (status code 200) CurrCalc continues - back to 1.a in basic flow</li>
+					<li>In case of a successful request (status code 200) CurrCalc continues - back to 1.i in basic flow</li>
 					<li>In case all the attempts fail, CurrCalc informs the user of the situation and offers possible solutions
-						<ol type="i">
+						<ol type="a">
 							<li>CurrCalc terminates</li>
 						</ol>
 					</li>
 				</ol>
 			</li>
 		</ol><br/>
-		In 1.a: The API responds with a status code other than 200, 500, or 503
-		<ol type="a">
+		In 1.i: The API responds with a status code other than 200, 500, or 503
+		<ol type="1">
 			<li>CurrCalc informs the user of the situation and offers possible solutions
 				<ol type="i">
 					<li>CurrCalc terminates</li>
 				</ol>
 			</li>
 		</ol><br/>
-		In 2.a: The user types in an integer that is not on the list, a decimal number, a character, or a string
-		<ol type="a">
+		In 2.i: The user types in an integer that is not on the list, a decimal number, a character, or a string
+		<ol type="1">
 			<li>CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 2 in basic flow</li>
 		</ol><br/>
-		In 3.a: The API responds with a status code 500 or 503
-		<ol type="a">
+		In 3.i: The API responds with a status code 500 or 503
+		<ol type="1">
 			<li>CurrCalc retries the request three more times in intervals of three seconds
 				<ol type="i">
 					<li>CurrCalc retries the request three more times in intervals of three seconds</li>
 					<li>In case all the attempts fail, CurrCalc informs the user of the situation and offers possible solutions
-						<ol type="i">
+						<ol type="a">
 							<li>CurrCalc terminates</li>
 						</ol>
 					</li>
 				</ol>
 			</li>
 		</ol><br/>
-		In 3.a: The API responds with a status code other than 200, 500, or 503
-		<ol type="a">
+		In 3.i: The API responds with a status code other than 200, 500, or 503
+		<ol type="1">
 			<li>CurrCalc informs the user of the situation and offers possible solutions
 				<ol type="i">
 					<li>CurrCalc terminates</li>
 				</ol>
 			</li>
 		</ol><br/>
-		In 4.a: The user types in a positive integer
-		<ol type="a">
-			<li>CurrCalc converts the integer into a decimal number and confirms the selection - proceed with 4.a.a in basic flow</li>
+		In 4.i: The user types in a positive integer
+		<ol type="1">
+			<li>CurrCalc converts the integer into a decimal number and confirms the selection - proceed with 4.i.a in basic flow</li>
 		</ol><br/>
-		In 4.a: The user types in a negative decimal number, a negative integer, a character, or a string
-		<ol type="a">
-			<li>CurrCalc responds with a prompt to type in an unsigned number for the sum - back to 4.a in basic flow</li>
+		In 4.i: The user types in a negative decimal number, a negative integer, a character, or a string
+		<ol type="1">
+			<li>CurrCalc responds with a prompt to type in an unsigned number for the sum - back to 4.i in basic flow</li>
 		</ol><br/>
-		In 5.a: The user types in an integer that is not on the list, a decimal number, a character, or a string
-		<ol type="a">
+		In 5.i: The user types in an integer that is not on the list, a decimal number, a character, or a string
+		<ol type="1">
 			<li>CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 5 in basic flow</li>
 		</ol>
 	</td>
@@ -183,9 +193,10 @@ There is only one possible use case when interacting with CurrCalc. The "Convert
 
 ![CurrCalc Class Diagram](https://github.com/DusDus3428/CPP_CurrCalc/blob/feature/01_design/documentation/images/diagrams/03_CurrCalc_ClassDiagram.png "CurrCalc Class Diagram")
 
-There are only two classes: CurrencyDetail and ExchangeRate.<br/> 
+There are three classes: CurrencyDetail, ExchangeRate, and ExchangeratesApiClient.<br/> 
 CurrencyDetail holds two public properties, a string called "name" for the name of the currency, and a list of ExchangeRate objects called "exchangeRates". The latter leads to a composition relationship from CurrencyDetail to ExchangeRate. CurrencyDetail also has the public "convertAmount" method, which takes a specified conversion amount, and the name of the target currency as arguments. The method will leverage the exchangeRates property to conduct the conversion.<br/>
-ExchangeRate also holds two public properties, a string called "currencyName" for the name of the currency, and a double called "rate" for the actual exchange rate.
+ExchangeRate also holds two public properties, a string called "currencyName" for the name of the currency, and a double called "rate" for the actual exchange rate.<br/>
+And then there is the ExchangeratesApiClient class. As its name states, it represents the client that sends requests to the exchangesrates API and handles the responses. It does not have any attributes, but four methods. The method getCurrencyNames() sends a request to the API to retrieve the list of currency names and then utilizes the private getCurrencyNamesFromResponse() method to extract and transform the names into a list of strings. Similarly, getCurrencyDetail() sends a request to the API to retrieve the currency detail using the name of the chosen initial currency. Then it utilizes the private getCurrencyDetailFromResponse() method to extract and transform the information into a CurrencyDetail object.
 
 ## Activity Diagram
 
