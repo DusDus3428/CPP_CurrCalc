@@ -12,7 +12,9 @@ FetchContent_MakeAvailable(googletest)
 
 # Set the source files that should be part of the CurrCalc test project
 set(SOURCES 
-    calculator/calculator_test.cpp
+    currency_detail/currency_detail.cpp
+    exchangerates_api_client/exchangerates_api_client_test.cpp
+    util/input_output_test.cpp
 )
 
 # Then the CurrCalc test application is created, and gtest and the CurrCalc lib are linked to it

@@ -11,8 +11,9 @@ FetchContent_MakeAvailable(cpr)
 
 # Set the source files that should be part of the CurrCalc library
 set(SOURCES 
-    calculator/calculator.cpp
+    currency_detail/currency_detail.cpp
     exchangerates_api_client/exchangerates_api_client.cpp
+    util/input_output.cpp
 )
 
 # The main code will be built into a separate library, CurrCalc_Lib

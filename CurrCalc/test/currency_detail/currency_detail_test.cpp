@@ -1,4 +1,4 @@
-#include <calculator/calculator.h>
+#include <currency_detail/currency_detail.h>
 #include <gtest/gtest.h>
 
 TEST(CalculatorTest, AddTwoValues)
