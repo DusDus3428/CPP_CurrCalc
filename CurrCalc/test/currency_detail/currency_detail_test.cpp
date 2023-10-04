@@ -2,7 +2,7 @@
 #include <exchange_rate/exchange_rate.h>
 #include <gtest/gtest.h>
 
-TEST(CalculatorTest, AddTwoValues)
+TEST(CurrencyDetailTest, AddTwoValues)
 {
     ASSERT_EQ(testAddFunction(1, 2), 3);
 }

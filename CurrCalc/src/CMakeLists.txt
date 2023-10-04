@@ -14,6 +14,7 @@ set(SOURCES
     currency_detail/currency_detail.cpp
     exchange_rate/exchange_rate.cpp
     exchangerates_api_client/exchangerates_api_client.cpp
+    helper/cpr_wrapper/cpr_wrapper.cpp
     util/input_output.cpp
 )
 
