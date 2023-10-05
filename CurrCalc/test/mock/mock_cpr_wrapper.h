@@ -4,5 +4,5 @@
 
 class MockCprWrapper : public CprWrapperInterface {
     public: 
-    MOCK_METHOD(cpr::Response, Get, (cpr::Url url, cpr::Parameters parameters), (override));
+        MOCK_METHOD(cpr::Response, Get, (cpr::Url url, cpr::Parameters parameters), (override));
 };

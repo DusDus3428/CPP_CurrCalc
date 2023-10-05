@@ -19,7 +19,7 @@ class ExchangeratesApiClientTestFixture : public ::testing::Test {
             currencyDetailSuccessResponse.status_code = 200;
             currencyDetailSuccessResponse.text = "{\"success\":true,\"timestamp\":1519296206,\"base\":\"USD\",\"date\":\"2021-03-17\",\"rates\":{\"GBP\":0.75008,\"EUR\":1.44320,\"JPY\":2.54043}}";
             exchangeRates = {ExchangeRate("GBP", 0.75008), ExchangeRate("EUR", 1.44320), ExchangeRate("JPY", 2.54043)};
-            currencyDetail = new CurrencyDetail("USD", exchangeRates)
+            currencyDetail = new CurrencyDetail("USD", exchangeRates);
 
             currencyDetailAbsoluteFailureResponse.status_code = 404; // Check Potential Errors table: https://exchangeratesapi.io/documentation/
             currencyDetailRetryFailureResponse.status_code = 500; // We should retry for 408, 425, 429, or 500 - https://stackoverflow.com/questions/51770071/what-are-the-http-codes-to-automatically-retry-the-request 

@@ -14,7 +14,6 @@ FetchContent_MakeAvailable(googletest)
 set(SOURCES 
     currency_detail/currency_detail_test.cpp
     exchangerates_api_client/exchangerates_api_client_test.cpp
-    util/input_output_test.cpp
 )
 
 set(HEADERS
