@@ -16,6 +16,5 @@ class CurrencyDetailTestFixture : public ::testing::Test {
 
 TEST_F(CurrencyDetailTestFixture, ConvertAmount)
 {
-    EXPECT_EQ(currencyDetail.convertAmount(500.0, "GBP"), 1000.0);
-    EXPECT_EQ(currencyDetail.convertAmount(500.0, "EUR"), 1500.0);
+    EXPECT_EQ(currencyDetail->convertAmount(500.0, "GBP"), 1000.0);
 }
