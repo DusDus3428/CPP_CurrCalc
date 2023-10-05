@@ -60,7 +60,7 @@ TEST_F(ExchangeratesApiClientTestFixture, GetCurrencyNames) {
     ON_CALL(cprWrapper, Get(url, parameters))
         .WillByDefault(Return(currencyNamesSuccessResponse));
 
-    EXPECT_EQ(apiClient.getCurrencyNames(), currencyNames);
+    EXPECT_EQ(apiClient->getCurrencyNames(), currencyNames);
 }
 
 TEST_F(ExchangeratesApiClientTestFixture, ThrowExceptionIfCurrencyNamesNotFetched) {
@@ -69,7 +69,7 @@ TEST_F(ExchangeratesApiClientTestFixture, ThrowExceptionIfCurrencyNamesNotFetche
     ON_CALL(cprWrapper, Get(url, parameters))
         .WillByDefault(Return(currencyNamesAbsoluteFailureResponse));
 
-    EXPECT_THROW(apiClient.getCurrencyNames(), CurrencyNamesNotFetchedException);
+    EXPECT_THROW(apiClient->getCurrencyNames(), CurrencyNamesNotFetchedException);
 }
 
 TEST_F(ExchangeratesApiClientTestFixture, ThrowExceptionIfCurrencyNamesNotFetchedAfterRetries) {
@@ -78,7 +78,7 @@ TEST_F(ExchangeratesApiClientTestFixture, ThrowExceptionIfCurrencyNamesNotFetche
     ON_CALL(cprWrapper, Get(url, parameters))
         .WillByDefault(Return(currencyNamesRetryFailureResponse));
 
-    EXPECT_THROW(apiClient.getCurrencyNames(), CurrencyNamesNotFetchedException);
+    EXPECT_THROW(apiClient->getCurrencyNames(), CurrencyNamesNotFetchedException);
 }
 
 TEST_F(ExchangeratesApiClientTestFixture, GetCurrencyDetail) {
@@ -87,7 +87,7 @@ TEST_F(ExchangeratesApiClientTestFixture, GetCurrencyDetail) {
     ON_CALL(cprWrapper, Get(url, parameters))
         .WillByDefault(Return(currencyDetailSuccessResponse));
 
-    EXPECT_EQ(apiClient.getCurrencyDetail(), currencyDetail);
+    EXPECT_EQ(apiClient->getCurrencyDetail(), currencyDetail);
 }
 
 TEST_F(ExchangeratesApiClientTestFixture, ThrowExceptionIfCurrencyDetailNotFetched) {
@@ -96,7 +96,7 @@ TEST_F(ExchangeratesApiClientTestFixture, ThrowExceptionIfCurrencyDetailNotFetch
     ON_CALL(cprWrapper, Get(url, parameters))
         .WillByDefault(Return(currencyDetailAbsoluteFailureResponse));
 
-    EXPECT_THROW(apiClient.getCurrencyDetail(), CurrencyDetailNotFetchedException);
+    EXPECT_THROW(apiClient->getCurrencyDetail(), CurrencyDetailNotFetchedException);
 }
 
 TEST_F(ExchangeratesApiClientTestFixture, ThrowExceptionIfCurrencyDetailNotFetchedAfterRetries) {
@@ -105,5 +105,5 @@ TEST_F(ExchangeratesApiClientTestFixture, ThrowExceptionIfCurrencyDetailNotFetch
     ON_CALL(cprWrapper, Get(url, parameters))
         .WillByDefault(Return(currencyDetailRetryFailureResponse));
 
-    EXPECT_THROW(apiClient.getCurrencyDetail(), CurrencyDetailNotFetchedException);
+    EXPECT_THROW(apiClient->getCurrencyDetail(), CurrencyDetailNotFetchedException);
 }
