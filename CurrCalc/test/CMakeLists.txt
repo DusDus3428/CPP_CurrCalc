@@ -14,12 +14,15 @@ FetchContent_MakeAvailable(googletest)
 set(SOURCES 
     currency_detail/currency_detail_test.cpp
     exchangerates_api_client/exchangerates_api_client_test.cpp
-    helper/cpr_wrapper/mock_cpr_wrapper.cpp
     util/input_output_test.cpp
 )
 
+set(HEADERS
+    mock/mock_cpr_wrapper.h
+)
+
 # Then the CurrCalc test application is created, and gtest and the CurrCalc lib are linked to it
-add_executable(CurrCalc_Test ${SOURCES})
+add_executable(CurrCalc_Test ${SOURCES} ${HEADERS})
 target_link_libraries(CurrCalc_Test gtest_main gmock CurrCalc_Lib)
 
 # Apparently it is not enough to link libraries to executables, as they are not included in the execution directories by CMake
