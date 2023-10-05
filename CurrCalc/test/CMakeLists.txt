@@ -11,7 +11,8 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE) # https://github.com/google/g
 FetchContent_MakeAvailable(googletest)
 
 # Set the source files that should be part of the CurrCalc test project
-set(SOURCES 
+set(SOURCES
+    main.cpp
     currency_detail/currency_detail_test.cpp
     exchangerates_api_client/exchangerates_api_client_test.cpp
 )
