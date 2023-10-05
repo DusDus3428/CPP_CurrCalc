@@ -35,6 +35,7 @@ CurrCalc is a C++ program written in C++20. To begin with it will remain strictl
 | -------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | CurrCalc_NFR_1 | Store API Key Using git-secret | The API key to the exchangereates API should be stored and encrypted in the repository using git-secret, to avoid storing sensitive data in a public online repository. 	  |
 | CurrCalc_NFR_2 | Retry Failed REST Requests 	  | If the data retrieval requests specified in CurrCalc_FR_2 and CurrCalc_FR_4 return with a 500 or 503 status code, they should be retried three more times in intervals of three seconds. If no successful request can be processed after that CurrCalc should terminate.  |
+| CurrCalc_NFR_3 | Keep Precision of Five Fractional Digits For Conversion 	  | For the conversion an amount with a maximum of five fractional digits should be accepted. If the user inputs more than that, the amount should be rounded to five fractional digits.  |
 
 # Architecture
 
@@ -128,7 +129,7 @@ Here is a classical use case description for the Convert Currency use case:
   <tr>
     <td>Alternative Flow(s)</td>
 	<td>
-		In 1.i: The API responds with a status code 500 or 503
+		In 1.i: The API responds with a status code 408, 425, 429, or 500
 		<ol type="1">
 			<li>CurrCalc retries the request three more times in intervals of three seconds
 				<ol type="i">
@@ -141,7 +142,7 @@ Here is a classical use case description for the Convert Currency use case:
 				</ol>
 			</li>
 		</ol><br/>
-		In 1.i: The API responds with a status code other than 200, 500, or 503
+		In 1.i: The API responds with a status code other than 200, 408, 425, 429, or 500
 		<ol type="1">
 			<li>CurrCalc informs the user of the situation and offers possible solutions
 				<ol type="i">
@@ -149,11 +150,20 @@ Here is a classical use case description for the Convert Currency use case:
 				</ol>
 			</li>
 		</ol><br/>
-		In 2.i: The user types in an integer that is not on the list, a decimal number, a character, or a string
+		In 2.i: The user types in an integer that is not on the list, a character, or a string
 		<ol type="1">
 			<li>CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 2 in basic flow</li>
 		</ol><br/>
-		In 3.i: The API responds with a status code 500 or 503
+		In 2.i: The user types in a decimal number, whose whole number part is on the list
+		<ol type="1">
+			<li>The fractional part of the number is truncated - proceed with 2.i.a in basic flow</li>
+		</ol><br/>
+		In 2.i: The user types in a decimal number, whose whole number part is not on the list
+		<ol type="1">
+			<li>The fractional part of the number is truncated</li>
+			<li>CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 2 in basic flow</li>
+		</ol><br/>
+		In 3.i: The API responds with a status code 408, 425, 429, or 500
 		<ol type="1">
 			<li>CurrCalc retries the request three more times in intervals of three seconds
 				<ol type="i">
@@ -166,7 +176,7 @@ Here is a classical use case description for the Convert Currency use case:
 				</ol>
 			</li>
 		</ol><br/>
-		In 3.i: The API responds with a status code other than 200, 500, or 503
+		In 3.i: The API responds with a status code other than 200, 408, 425, 429, or 500
 		<ol type="1">
 			<li>CurrCalc informs the user of the situation and offers possible solutions
 				<ol type="i">
@@ -182,10 +192,19 @@ Here is a classical use case description for the Convert Currency use case:
 		<ol type="1">
 			<li>CurrCalc responds with a prompt to type in an unsigned number for the sum - back to 4.i in basic flow</li>
 		</ol><br/>
-		In 5.i: The user types in an integer that is not on the list, a decimal number, a character, or a string
+		In 5.i: The user types in an integer that is not on the list, a character, or a string
 		<ol type="1">
 			<li>CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 5 in basic flow</li>
-		</ol>
+		</ol><br/>
+		In 5.i: The user types in a decimal number, whose whole number part is on the list
+		<ol type="1">
+			<li>The fractional part of the number is truncated - proceed with 5.i.a in basic flow</li>
+		</ol><br/>
+		In 5.i: The user types in a decimal number, whose whole number part is not on the list
+		<ol type="1">
+			<li>The fractional part of the number is truncated</li>
+			<li>CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 5 in basic flow</li>
+		</ol><br/>
 	</td>
 </table>
 
@@ -203,7 +222,9 @@ And then there is the ExchangeratesApiClient class. As its name states, it repre
 ![CurrCalc Activity Diagram for Convert Currency](https://github.com/DusDus3428/CPP_CurrCalc/blob/feature/01_design/documentation/images/diagrams/04_CurrCalc_ActivityDiagram_ConvertCurrency.png "CurrCalc Activity Diagram for Convert Currency")
 
 The activity diagram above showcases the main flow of the program.<br/> 
-Once CurrCalc is started, the program will send a REST request to the exchangerates API to retrieve the list of the names of available currencies. Once the API sends this to CurrCalc, the user must choose one of the currencies from the numbered list to use for the initial currency. If the user decides to make an input that is not one of the numbers on the list, they will be prompted to do so again until a valid selection has been made.<br/>
-After the selection has been made, CurrCalc uses it to request the full details of the currency, including the exchangerates for the other currencies. Once the API sends these to CurrCalc, the user is prompted to type in the amount that is to be converted. If the user types in something other than a positive integer or positive floating point number, they will be prompted to do so again until a valid number has been provided. Side note: positive integer numbers are converted into floating point numbers.<br/>
-Next, the user must choose the target currency from a numbered list. This list is gathered from the initial currency's exchange rates. If the user decides to make a selection that is not one of the numbers on the list, they will be prompted to do so again until a valid selection has been made.<br/>
+Once CurrCalc is started, the program will send a REST request to the exchangerates API to retrieve the list of the names of available currencies. Once the API sends this to CurrCalc, the user must choose one of the currencies from the numbered list to use for the initial currency. If the user decides to make an input that is not one of the numbers on the list, they will be prompted to do so again until a valid selection has been made. This check is made within the Get Currency Selection activity.<br/>
+After the selection has been made, CurrCalc uses it to request the full details of the currency, including the exchangerates for the other currencies. Once the API sends these to CurrCalc, the user is prompted to type in the amount that is to be converted. If the user types in something other than a positive integer or positive floating point number, they will be prompted to do so again until a valid number has been provided. Side note: positive integer numbers are converted into floating point numbers. This check is made within the Get Conversion Amount activity.<br/>
+Next, the user must choose the target currency from a numbered list. The activity Get Currency Selection is reused here. The only difference is that the numbered list is gathered from the initial currency's exchange rates. This is done for two reasons: on one hand, we do not know if the API has all the exchange rates for the selected initial currency, and on the other, we do not need to include the initial currency.<br/>
 Once this is done, the specified amount will be converted from the initial currency into the target one and the results will be printed to the console. Then the CurrCalc program is terminated. 
+
+Please note that this is a very simplified activity diagram that displays the rough ideal flow of the program. All the possibilities of program termination are not depicted. However, they are described in the use case table **[here](#use-cases)**.
