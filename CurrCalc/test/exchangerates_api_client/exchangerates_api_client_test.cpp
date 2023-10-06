@@ -1,17 +1,21 @@
 #include "../mock/mock_cpr_wrapper.h"
 #include <cpr/cpr.h>
+#include <currency_detail/currency_detail.h>
 #include <exchangerates_api_client/exchangerates_api_client.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
 class ExchangeratesApiClientTestFixture : public ::testing::Test {
     protected:
         void SetUp() override {
+            apiClient = new ExchangeratesApiClient(urlString, accessKeyString, &cprWrapper);
+
             currencyNamesSuccessResponse.status_code = 200;
             currencyNamesSuccessResponse.text = "{\"success\":true,\"symbols\":{\"USD\":\"United States Dollar\",\"GBP\":\"Great Britain Pound\",\"EUR\":\"Euro\",\"JPY\":\"Japanese Yen\"}}";
-            currencyNames = {"USD", "GBP", "EUR", "JPY"};
+            currencyNames = {"EUR", "GBP", "JPY", "USD"};
             
             currencyNamesAbsoluteFailureResponse.status_code = 404; // Check Potential Errors table: https://exchangeratesapi.io/documentation/
             currencyNamesRetryFailureResponse.status_code = 500; // We should retry for 408, 425, 429, or 500 - https://stackoverflow.com/questions/51770071/what-are-the-http-codes-to-automatically-retry-the-request
@@ -25,9 +29,14 @@ class ExchangeratesApiClientTestFixture : public ::testing::Test {
             currencyDetailRetryFailureResponse.status_code = 500; // We should retry for 408, 425, 429, or 500 - https://stackoverflow.com/questions/51770071/what-are-the-http-codes-to-automatically-retry-the-request 
         }
 
+        std::string urlString{"url"};
+        std::string accessKeyString{"accessKey"};
+        cpr::Url url{urlString};
+        cpr::Parameters parameters{{"access_key", accessKeyString}};
+
         // Mock object and test object
         MockCprWrapper cprWrapper;
-        ExchangeratesApiClient apiClient("url", "access_key", &cprWrapper);
+        ExchangeratesApiClient* apiClient;
 
         // Success response for fetching currency names and the list of currency names
         cpr::Response currencyNamesSuccessResponse;
@@ -49,57 +58,68 @@ class ExchangeratesApiClientTestFixture : public ::testing::Test {
 
 using ::testing::AtLeast;
 using ::testing::Return;
+using ::testing::ReturnPointee;
+using ::testing::ElementsAre;
+using ::testing::_;
 
 TEST_F(ExchangeratesApiClientTestFixture, GetCurrencyNames) {
-    EXPECT_CALL(cprWrapper, Get(url, parameters))
+    ON_CALL(cprWrapper, Get(_, _))
+        .WillByDefault(ReturnPointee(&currencyNamesSuccessResponse));
+    EXPECT_CALL(cprWrapper, Get(_, _))
         .Times(AtLeast(1));
-    ON_CALL(cprWrapper, Get(url, parameters))
-        .WillByDefault(Return(currencyNamesSuccessResponse));
 
-    EXPECT_EQ(apiClient->getCurrencyNames(), currencyNames);
+    EXPECT_THAT(apiClient->getCurrencyNames(), ElementsAre("EUR", "GBP", "JPY", "USD"));
 }
 
 TEST_F(ExchangeratesApiClientTestFixture, ThrowExceptionIfCurrencyNamesNotFetched) {
-    EXPECT_CALL(cprWrapper, Get(url, parameters))
+    ON_CALL(cprWrapper, Get(_, _))
+        .WillByDefault(ReturnPointee(&currencyNamesAbsoluteFailureResponse));
+    EXPECT_CALL(cprWrapper, Get(_, _))
         .Times(AtLeast(1));
-    ON_CALL(cprWrapper, Get(url, parameters))
-        .WillByDefault(Return(currencyNamesAbsoluteFailureResponse));
 
-    EXPECT_THROW(apiClient->getCurrencyNames(), CurrencyNamesNotFetchedException);
+    EXPECT_THROW(apiClient->getCurrencyNames(), std::runtime_error);
 }
 
 TEST_F(ExchangeratesApiClientTestFixture, ThrowExceptionIfCurrencyNamesNotFetchedAfterRetries) {
-    EXPECT_CALL(cprWrapper, Get(url, parameters))
+    ON_CALL(cprWrapper, Get(_, _))
+        .WillByDefault(ReturnPointee(&currencyNamesRetryFailureResponse));
+    EXPECT_CALL(cprWrapper, Get(_, _))
         .Times(AtLeast(3));
-    ON_CALL(cprWrapper, Get(url, parameters))
-        .WillByDefault(Return(currencyNamesRetryFailureResponse));
 
-    EXPECT_THROW(apiClient->getCurrencyNames(), CurrencyNamesNotFetchedException);
+    EXPECT_THROW(apiClient->getCurrencyNames(), std::runtime_error);
 }
 
 TEST_F(ExchangeratesApiClientTestFixture, GetCurrencyDetail) {
-    EXPECT_CALL(cprWrapper, Get(url, parameters))
+    ON_CALL(cprWrapper, Get(_, _))
+        .WillByDefault(ReturnPointee(&currencyDetailSuccessResponse));
+    EXPECT_CALL(cprWrapper, Get(_, _))
         .Times(AtLeast(1));
-    ON_CALL(cprWrapper, Get(url, parameters))
-        .WillByDefault(Return(currencyDetailSuccessResponse));
 
-    EXPECT_EQ(apiClient->getCurrencyDetail(), currencyDetail);
+    CurrencyDetail result = apiClient->getCurrencyDetail("CUR");
+    
+    EXPECT_EQ(result.getName(), currencyDetail->getName());
+    EXPECT_EQ(result.getExchangeRates()[0].getCurrency(), "EUR");
+    EXPECT_EQ(result.getExchangeRates()[0].getRate(), 1.44320);
+    EXPECT_EQ(result.getExchangeRates()[1].getCurrency(), "GBP");
+    EXPECT_EQ(result.getExchangeRates()[1].getRate(), 0.75008);
+    EXPECT_EQ(result.getExchangeRates()[2].getCurrency(), "JPY");
+    EXPECT_EQ(result.getExchangeRates()[2].getRate(), 2.54043);
 }
 
 TEST_F(ExchangeratesApiClientTestFixture, ThrowExceptionIfCurrencyDetailNotFetched) {
-    EXPECT_CALL(cprWrapper, Get(url, parameters))
+    ON_CALL(cprWrapper, Get(_, _))
+        .WillByDefault(ReturnPointee(&currencyDetailAbsoluteFailureResponse));
+    EXPECT_CALL(cprWrapper, Get(_, _))
         .Times(AtLeast(1));
-    ON_CALL(cprWrapper, Get(url, parameters))
-        .WillByDefault(Return(currencyDetailAbsoluteFailureResponse));
 
-    EXPECT_THROW(apiClient->getCurrencyDetail(), CurrencyDetailNotFetchedException);
+    EXPECT_THROW(apiClient->getCurrencyDetail("CUR"), std::runtime_error);
 }
 
 TEST_F(ExchangeratesApiClientTestFixture, ThrowExceptionIfCurrencyDetailNotFetchedAfterRetries) {
-    EXPECT_CALL(cprWrapper, Get(url, parameters))
+    ON_CALL(cprWrapper, Get(_, _))
+        .WillByDefault(ReturnPointee(&currencyDetailRetryFailureResponse));
+    EXPECT_CALL(cprWrapper, Get(_, _))
         .Times(AtLeast(3));
-    ON_CALL(cprWrapper, Get(url, parameters))
-        .WillByDefault(Return(currencyDetailRetryFailureResponse));
 
-    EXPECT_THROW(apiClient->getCurrencyDetail(), CurrencyDetailNotFetchedException);
+    EXPECT_THROW(apiClient->getCurrencyDetail("CUR"), std::runtime_error);
 }

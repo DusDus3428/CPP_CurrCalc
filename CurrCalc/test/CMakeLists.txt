@@ -23,6 +23,7 @@ set(HEADERS
 # Then the CurrCalc test application is created, and gtest and the CurrCalc lib are linked to it
 add_executable(CurrCalc_Test ${SOURCES} ${HEADERS})
 target_link_libraries(CurrCalc_Test gtest_main gmock CurrCalc_Lib)
+target_compile_definitions( CurrCalc_Test PRIVATE -DGTEST_LINKED_AS_SHARED_LIBRARY )
 
 # Apparently it is not enough to link libraries to executables, as they are not included in the execution directories by CMake
 # This custom command makes sure that the runtime dlls are copied into the execution directoreis after the build has completed
