@@ -27,11 +27,7 @@ class ExchangeratesApiClientTestFixture : public ::testing::Test {
 
         // Mock object and test object
         MockCprWrapper cprWrapper;
-        ExchangeratesApiClient apiClient(&cprWrapper);
-
-        // Test values the mock client will use for the fake requests 
-        cpr::Url url{"url"};
-        cpr::Parameters parameters{{"key", "value"}};
+        ExchangeratesApiClient apiClient("url", "access_key", &cprWrapper);
 
         // Success response for fetching currency names and the list of currency names
         cpr::Response currencyNamesSuccessResponse;
