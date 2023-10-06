@@ -8,13 +8,18 @@ FetchContent_Declare(
     GIT_TAG 1.10.4
 ) # Find the latest release here https://github.com/libcpr/cpr/releases
 FetchContent_MakeAvailable(cpr)
+FetchContent_Declare(
+    nlohmann_json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.11.2
+) # Find the latest release here https://github.com/libcpr/cpr/releases
+FetchContent_MakeAvailable(nlohmann_json)
 
 # Set the source files that should be part of the CurrCalc library
 set(SOURCES 
     currency_detail/currency_detail.cpp
     exchange_rate/exchange_rate.cpp
     exchangerates_api_client/exchangerates_api_client.cpp
-    helper/cpr_wrapper.cpp
     util/input_output.cpp
 )
 
@@ -27,7 +32,7 @@ set(SOURCES
 # Then we link the CPR library becuase it will be used by the CurrCalc lib
 add_library(CurrCalc_Lib STATIC ${SOURCES})
 target_include_directories(CurrCalc_Lib PUBLIC include)
-target_link_libraries(CurrCalc_Lib cpr::cpr)
+target_link_libraries(CurrCalc_Lib cpr::cpr nlohmann_json::nlohmann_json)
 
 # Then the CurrCalc application is created and the CurrCalc lib is linked to it
 add_executable(CurrCalc_Application main.cpp)
