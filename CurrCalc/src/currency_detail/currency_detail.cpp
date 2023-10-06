@@ -22,6 +22,16 @@ CurrencyDetail::CurrencyDetail(std::string name, std::vector<ExchangeRate> excha
     m_exchangeRates = exchangeRates;
 }
 
+std::vector<std::string> CurrencyDetail::getAllCurrencyNamesFromExchangeRates() const {
+    std::vector<std::string> currencyNames;
+    
+    for(auto er : m_exchangeRates) {
+        currencyNames.push_back(er.getCurrency());
+    }
+
+    return currencyNames;
+}
+
 double CurrencyDetail::convertAmount(double amount, std::string initialCurrencyName, std::string targetCurrencyName) const {   
     if(targetCurrencyName == m_name){
         return amount / getConversionRateFromEuro(initialCurrencyName);

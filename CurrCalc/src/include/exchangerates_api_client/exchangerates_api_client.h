@@ -15,12 +15,10 @@ class ExchangeratesApiClient {
         std::string m_url;
         std::string m_accessKey;
         CprWrapperInterface* m_cprWrapper;
-        std::vector<std::string> getCurrencyNamesFromResponse(std::string responseBody) const;
         CurrencyDetail getCurrencyDetailFromResponse(std::string responseBody) const;
     public:
         ExchangeratesApiClient(std::string url, std::string accessKey, CprWrapperInterface* cprWrapper);
-        std::vector<std::string> getCurrencyNames() const;
-        CurrencyDetail getCurrencyDetail(std::string initialCurrency) const;
+        CurrencyDetail getEuroCurrencyDetail() const;
         std::string getUrl() const {return m_url;}
         std::string getAccessKey() const {return m_accessKey;}
         CprWrapperInterface* getCprWrapper() const {return m_cprWrapper;}

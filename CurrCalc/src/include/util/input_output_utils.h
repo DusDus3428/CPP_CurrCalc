@@ -7,13 +7,13 @@
 
 void printWelcome();
 
-int getCurrencySelection(bool isInitialCurrencySelection, std::vector<std::string> currencies);
+int getCurrencySelection(std::vector<std::string> currencies, int initialCurrencyIndex = -1);
 
 void printCurrencies(std::vector<std::string> currencies);
 
 double getConversionAmount();
 
-void printResult(CurrencyDetail currencyDetail, std::string targetCurrency, double initalAmount, double convertedAmount);
+void printResult(double conversionAmount, std::string initialCurrency, double convertedAmount, std::string targetCurrency);
 
 void printFarewell();
 

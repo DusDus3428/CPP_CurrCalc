@@ -21,7 +21,6 @@ set(SOURCES
     exchange_rate/exchange_rate.cpp
     exchangerates_api_client/exchangerates_api_client.cpp
     util/input_output_utils.cpp
-    util/vector_utils.cpp
 )
 
 # The main code will be built into a separate library, CurrCalc_Lib

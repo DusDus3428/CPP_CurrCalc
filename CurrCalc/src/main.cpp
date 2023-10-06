@@ -1,7 +1,6 @@
 #include <currency_detail/currency_detail.h>
 #include <exchangerates_api_client/exchangerates_api_client.h>
 #include <helper/cpr_wrapper.h>
-#include <util/vector_utils.h>
 #include <iostream>
 #include <string>
 #include <util/constants.h>
@@ -14,23 +13,20 @@ int main()
 
     CprWrapper CprWrapper;
     ExchangeratesApiClient client(constants::exchangeratesApiBaseUrl, constants::exchangeratesApiAccessKey, &CprWrapper);
-    std::vector<std::string> initialCurrencies = client.getCurrencyNames();
+    CurrencyDetail currencyDetail = client.getEuroCurrencyDetail();
 
-    bool isInitialCurrencySelection{true};
-    int initialCurrencySelection = getCurrencySelection(isInitialCurrencySelection, initialCurrencies);
+    std::vector<std::string> currencyNames = currencyDetail.getAllCurrencyNamesFromExchangeRates();
 
-    CurrencyDetail currencyDetail = client.getCurrencyDetail(initialCurrencies[initialCurrencySelection-1]);
+    int initialCurrencyIndex = getCurrencySelection(currencyNames);
+    std::string initalCurrencyName = currencyNames[initialCurrencyIndex];
+    int targetCurrencyIndex = getCurrencySelection(currencyNames, initialCurrencyIndex);
+    std::string targetCurrencyName = currencyNames[targetCurrencyIndex];
 
-    std::vector<std::string> targetCurrencies = listOfExchangeRateToListOfString(currencyDetail.getExchangeRates());
-    std::vector<ExchangeRate> exchangeRates = currencyDetail.getExchangeRates();
+    double conversionAmount = getConversionAmount();
 
-    int targetCurrencySelection = getCurrencySelection(!isInitialCurrencySelection, targetCurrencies);
+    double convertedAmount = currencyDetail.convertAmount(conversionAmount, initalCurrencyName, targetCurrencyName);
 
-    double initialConversionAmount = getConversionAmount();
-
-    double convertedAmount = currencyDetail.convertAmount(initialConversionAmount, targetCurrencies[targetCurrencySelection-1]);
-
-    printResult(currencyDetail, targetCurrencies[targetCurrencySelection], initialConversionAmount, convertedAmount);
+    printResult(conversionAmount, initalCurrencyName, convertedAmount, targetCurrencyName);
 
     printFarewell();
 

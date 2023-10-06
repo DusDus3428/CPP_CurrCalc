@@ -18,19 +18,6 @@ ExchangeratesApiClient::ExchangeratesApiClient(std::string url, std::string acce
     m_cprWrapper = cprWrapper;
 }
 
-std::vector<std::string> ExchangeratesApiClient::getCurrencyNamesFromResponse(std::string responseBody) const {
-    json data = json::parse(responseBody);
-
-    std::vector<std::string> currencyNames; 
-
-    for (auto& el : data["symbols"].items())
-    {
-        currencyNames.push_back(el.key());
-    }
-
-    return currencyNames;
-};
-
 CurrencyDetail ExchangeratesApiClient::getCurrencyDetailFromResponse(std::string responseBody) const {
     json data = json::parse(responseBody);
 
@@ -44,42 +31,14 @@ CurrencyDetail ExchangeratesApiClient::getCurrencyDetailFromResponse(std::string
     return CurrencyDetail(data["base"], exchangeRates);
 };
 
-std::vector<std::string> ExchangeratesApiClient::getCurrencyNames() const {
-    int attempts{0};
-    cpr::Response response;
-    do {
-        response = getCprWrapper()->Get(
-            cpr::Url{getUrl().append("symbols")},
-            cpr::Parameters{{"access_key", m_accessKey}}
-        );
-
-        switch(response.status_code){
-            case 200:
-                return getCurrencyNamesFromResponse(response.text);
-            case 408:
-            case 425:
-            case 429:
-            case 500:
-                attempts++;
-                std::this_thread::sleep_for (std::chrono::seconds(3));
-                continue;
-            default:
-                throw std::runtime_error("Could not get currency names. Response code: " + std::to_string(response.status_code)); 
-        }
-    } while (attempts < 4);
-
-    throw std::runtime_error("Could not get currency names after " + std::to_string(attempts) + ". Last response code: " + std::to_string(response.status_code));
-}
-
-CurrencyDetail ExchangeratesApiClient::getCurrencyDetail(std::string initialCurrency) const {
+CurrencyDetail ExchangeratesApiClient::getEuroCurrencyDetail() const {
     int attempts{0};
     cpr::Response response;
     do {
         response = getCprWrapper()->Get(
             cpr::Url{getUrl().append("latest")},
             cpr::Parameters{
-                {"access_key", m_accessKey},
-                {"base", initialCurrency}
+                {"access_key", m_accessKey}
             }
         );
 
