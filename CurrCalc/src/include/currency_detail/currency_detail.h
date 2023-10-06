@@ -9,9 +9,10 @@ class CurrencyDetail {
     private:
         std::string m_name;
         std::vector<ExchangeRate> m_exchangeRates;
+        double getConversionRateFromEuro(std::string currencyName) const;
     public:
         CurrencyDetail(std::string name, std::vector<ExchangeRate> exchangeRates);
-        double convertAmount(double amount, std::string targetCurrencyName) const;
+        double convertAmount(double amount, std::string initialCurrencyName, std::string targetCurrencyName) const;
         std::string getName() const {return m_name;}
         std::vector<ExchangeRate> getExchangeRates() const {return m_exchangeRates;}
 };
