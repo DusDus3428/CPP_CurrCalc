@@ -33,12 +33,15 @@ std::vector<std::string> CurrencyDetail::getAllCurrencyNamesFromExchangeRates() 
 }
 
 double CurrencyDetail::convertAmount(double amount, std::string initialCurrencyName, std::string targetCurrencyName) const {   
+    double convertedAmount{};
     if(targetCurrencyName == m_name){
-        return amount / getConversionRateFromEuro(initialCurrencyName);
+        convertedAmount = amount / getConversionRateFromEuro(initialCurrencyName);
     } else if(initialCurrencyName == m_name) {
-        return amount * getConversionRateFromEuro(targetCurrencyName);
+        convertedAmount = amount * getConversionRateFromEuro(targetCurrencyName);
     } else {
         double amountInEuro = amount / getConversionRateFromEuro(initialCurrencyName);
-        return amount * getConversionRateFromEuro(targetCurrencyName);
+        convertedAmount = amountInEuro * getConversionRateFromEuro(targetCurrencyName);
     }
+
+    return convertedAmount;
 }
