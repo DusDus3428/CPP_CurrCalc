@@ -12,18 +12,11 @@ class ExchangeratesApiClientTestFixture : public ::testing::Test {
     protected:
         void SetUp() override {
             apiClient = new ExchangeratesApiClient(urlString, accessKeyString, &cprWrapper);
-
-            currencyNamesSuccessResponse.status_code = 200;
-            currencyNamesSuccessResponse.text = "{\"success\":true,\"symbols\":{\"USD\":\"United States Dollar\",\"GBP\":\"Great Britain Pound\",\"EUR\":\"Euro\",\"JPY\":\"Japanese Yen\"}}";
-            currencyNames = {"EUR", "GBP", "JPY", "USD"};
             
-            currencyNamesAbsoluteFailureResponse.status_code = 404; // Check Potential Errors table: https://exchangeratesapi.io/documentation/
-            currencyNamesRetryFailureResponse.status_code = 500; // We should retry for 408, 425, 429, or 500 - https://stackoverflow.com/questions/51770071/what-are-the-http-codes-to-automatically-retry-the-request
-
             currencyDetailSuccessResponse.status_code = 200;
-            currencyDetailSuccessResponse.text = "{\"success\":true,\"timestamp\":1519296206,\"base\":\"USD\",\"date\":\"2021-03-17\",\"rates\":{\"GBP\":0.75008,\"EUR\":1.44320,\"JPY\":2.54043}}";
-            exchangeRates = {ExchangeRate("GBP", 0.75008), ExchangeRate("EUR", 1.44320), ExchangeRate("JPY", 2.54043)};
-            currencyDetail = new CurrencyDetail("USD", exchangeRates);
+            currencyDetailSuccessResponse.text = "{\"success\":true,\"timestamp\":1519296206,\"base\":\"EUR\",\"date\":\"2021-03-17\",\"rates\":{\"GBP\":0.75008,\"USD\":1.44320,\"JPY\":2.54043}}";
+            exchangeRates = {ExchangeRate("GBP", 0.75008), ExchangeRate("USD", 1.44320), ExchangeRate("JPY", 2.54043)};
+            currencyDetail = new CurrencyDetail("EUR", exchangeRates);
 
             currencyDetailAbsoluteFailureResponse.status_code = 404; // Check Potential Errors table: https://exchangeratesapi.io/documentation/
             currencyDetailRetryFailureResponse.status_code = 500; // We should retry for 408, 425, 429, or 500 - https://stackoverflow.com/questions/51770071/what-are-the-http-codes-to-automatically-retry-the-request 
@@ -57,37 +50,8 @@ class ExchangeratesApiClientTestFixture : public ::testing::Test {
 };
 
 using ::testing::AtLeast;
-using ::testing::Return;
 using ::testing::ReturnPointee;
-using ::testing::ElementsAre;
 using ::testing::_;
-
-TEST_F(ExchangeratesApiClientTestFixture, GetCurrencyNames) {
-    ON_CALL(cprWrapper, Get(_, _))
-        .WillByDefault(ReturnPointee(&currencyNamesSuccessResponse));
-    EXPECT_CALL(cprWrapper, Get(_, _))
-        .Times(AtLeast(1));
-
-    EXPECT_THAT(apiClient->getCurrencyNames(), ElementsAre("EUR", "GBP", "JPY", "USD"));
-}
-
-TEST_F(ExchangeratesApiClientTestFixture, ThrowExceptionIfCurrencyNamesNotFetched) {
-    ON_CALL(cprWrapper, Get(_, _))
-        .WillByDefault(ReturnPointee(&currencyNamesAbsoluteFailureResponse));
-    EXPECT_CALL(cprWrapper, Get(_, _))
-        .Times(AtLeast(1));
-
-    EXPECT_THROW(apiClient->getCurrencyNames(), std::runtime_error);
-}
-
-TEST_F(ExchangeratesApiClientTestFixture, ThrowExceptionIfCurrencyNamesNotFetchedAfterRetries) {
-    ON_CALL(cprWrapper, Get(_, _))
-        .WillByDefault(ReturnPointee(&currencyNamesRetryFailureResponse));
-    EXPECT_CALL(cprWrapper, Get(_, _))
-        .Times(AtLeast(3));
-
-    EXPECT_THROW(apiClient->getCurrencyNames(), std::runtime_error);
-}
 
 TEST_F(ExchangeratesApiClientTestFixture, GetCurrencyDetail) {
     ON_CALL(cprWrapper, Get(_, _))
@@ -95,15 +59,15 @@ TEST_F(ExchangeratesApiClientTestFixture, GetCurrencyDetail) {
     EXPECT_CALL(cprWrapper, Get(_, _))
         .Times(AtLeast(1));
 
-    CurrencyDetail result = apiClient->getCurrencyDetail("CUR");
+    CurrencyDetail result = apiClient->getEuroCurrencyDetail();
     
     EXPECT_EQ(result.getName(), currencyDetail->getName());
-    EXPECT_EQ(result.getExchangeRates()[0].getCurrency(), "EUR");
-    EXPECT_EQ(result.getExchangeRates()[0].getRate(), 1.44320);
-    EXPECT_EQ(result.getExchangeRates()[1].getCurrency(), "GBP");
-    EXPECT_EQ(result.getExchangeRates()[1].getRate(), 0.75008);
-    EXPECT_EQ(result.getExchangeRates()[2].getCurrency(), "JPY");
-    EXPECT_EQ(result.getExchangeRates()[2].getRate(), 2.54043);
+    EXPECT_EQ(result.getExchangeRates()[0].getCurrency(), "GBP");
+    EXPECT_EQ(result.getExchangeRates()[0].getRate(), 0.75008);
+    EXPECT_EQ(result.getExchangeRates()[1].getCurrency(), "JPY");
+    EXPECT_EQ(result.getExchangeRates()[1].getRate(), 2.54043);
+    EXPECT_EQ(result.getExchangeRates()[2].getCurrency(), "USD");
+    EXPECT_EQ(result.getExchangeRates()[2].getRate(), 1.44320);
 }
 
 TEST_F(ExchangeratesApiClientTestFixture, ThrowExceptionIfCurrencyDetailNotFetched) {
@@ -112,7 +76,7 @@ TEST_F(ExchangeratesApiClientTestFixture, ThrowExceptionIfCurrencyDetailNotFetch
     EXPECT_CALL(cprWrapper, Get(_, _))
         .Times(AtLeast(1));
 
-    EXPECT_THROW(apiClient->getCurrencyDetail("CUR"), std::runtime_error);
+    EXPECT_THROW(apiClient->getEuroCurrencyDetail(), std::runtime_error);
 }
 
 TEST_F(ExchangeratesApiClientTestFixture, ThrowExceptionIfCurrencyDetailNotFetchedAfterRetries) {
@@ -121,5 +85,5 @@ TEST_F(ExchangeratesApiClientTestFixture, ThrowExceptionIfCurrencyDetailNotFetch
     EXPECT_CALL(cprWrapper, Get(_, _))
         .Times(AtLeast(3));
 
-    EXPECT_THROW(apiClient->getCurrencyDetail("CUR"), std::runtime_error);
+    EXPECT_THROW(apiClient->getEuroCurrencyDetail(), std::runtime_error);
 }
