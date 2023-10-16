@@ -122,16 +122,16 @@ There is only one possible use case when interacting with CurrCalc. The "Convert
 	</tr>
 	<tr>
 		<td>Post Condition(s)</td>
-		<td>The specified amount has been converted from the selected initial currency to the selected target currency. CurrCalc program has been terminated.</td>
+		<td>The specified amount has been converted from the selected initial currency to the selected target currency. CurrCalc has terminated.</td>
 	</tr>
 	<tr>
 		<td>Alternative Flow(s)</td>
 		<td>
-			In 2.i: The API responds with a status code 408, 425, 429, or 500
+			In 2.i: The API responds with a status codes 408, 425, 429, or 500
 			<ol type="1">
 				<li>CurrCalc retries the request three more times in intervals of three seconds
 					<ol type="i">
-						<li>In case of a successful request (status code 200) CurrCalc continues - back to 2.i in basic flow</li>
+						<li>In case of a successful request (status code 200), CurrCalc continues - back to 2.i in the basic flow</li>
 						<li>In case all the attempts fail, CurrCalc informs the user of the situation and offers possible solutions
 							<ol type="a">
 								<li>CurrCalc terminates</li>
@@ -150,37 +150,37 @@ There is only one possible use case when interacting with CurrCalc. The "Convert
 			</ol><br/>
 			In 3.i: The user types in an integer that is not on the list, a character, or a string
 			<ol type="1">
-				<li>CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 3 in basic flow</li>
+				<li>CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 3 in the basic flow</li>
 			</ol><br/>
 			In 3.i: The user types in a decimal number, whose whole number part is on the list
 			<ol type="1">
-				<li>The fractional part of the number is truncated - proceed with 3.i.a in basic flow</li>
+				<li>The fractional part of the number is truncated - proceed with 3.i.a in the basic flow</li>
 			</ol><br/>
 			In 3.i: The user types in a decimal number, whose whole number part is not on the list
 			<ol type="1">
 				<li>The fractional part of the number is truncated</li>
-				<li>CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 3 in basic flow</li>
+				<li>CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 3 in the basic flow</li>
 			</ol><br/>
 			In 4.i: The user types in an integer that is not on the list, a character, or a string
 			<ol type="1">
-				<li>CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 4 in basic flow</li>
+				<li>CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 4 in the basic flow</li>
 			</ol><br/>
 			In 4.i: The user types in a decimal number, whose whole number part is on the list
 			<ol type="1">
-				<li>The fractional part of the number is truncated - proceed with 4.i.a in basic flow</li>
+				<li>The fractional part of the number is truncated - proceed with 4.i.a in the basic flow</li>
 			</ol><br/>
 			In 4.i: The user types in a decimal number, whose whole number part is not on the list
 			<ol type="1">
 				<li>The fractional part of the number is truncated</li>
-				<li>CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 4 in basic flow</li>
+				<li>CurrCalc responds with a prompt to make a selection based on the numbers provided in the list - back to 4 in the basic flow</li>
 			</ol><br/>
 			In 5.i: The user types in a positive integer
 			<ol type="1">
-				<li>CurrCalc converts the integer into a decimal number and confirms the selection - proceed with 5.i.a in basic flow</li>
+				<li>CurrCalc converts the integer into a decimal number and confirms the selection - proceed with 5.i.a in the basic flow</li>
 			</ol><br/>
 			In 5.i: The user types in a negative decimal number, a negative integer, a character, or a string
 			<ol type="1">
-				<li>CurrCalc responds with a prompt to type in an unsigned number for the sum - back to 5.i in basic flow</li>
+				<li>CurrCalc responds with a prompt to type in an unsigned number for the sum - back to 5.i in the basic flow</li>
 			</ol><br/>
 		</td>
 	</tbody>
@@ -190,10 +190,10 @@ There is only one possible use case when interacting with CurrCalc. The "Convert
 
 ![CurrCalc Class Diagram](https://github.com/DusDus3428/CPP_CurrCalc/blob/feature/01_design/documentation/images/diagrams/03_CurrCalc_ClassDiagram.png "CurrCalc Class Diagram")
 
-There are three classes: CurrencyDetail, ExchangeRate, and ExchangeratesApiClient.<br/> 
-CurrencyDetail holds two public properties, a string called "name" for the name of the currency, and a list of ExchangeRate objects called "exchangeRates". The latter leads to a composition relationship from CurrencyDetail to ExchangeRate. CurrencyDetail also has the public "convertAmount" method, which takes a specified conversion amount, and the name of the target currency as arguments. The method will leverage the exchangeRates property to conduct the conversion.<br/>
-ExchangeRate also holds two public properties, a string called "currencyName" for the name of the currency, and a double called "rate" for the actual exchange rate.<br/>
-And then there is the ExchangeratesApiClient class. As its name states, it represents the client that sends requests to the exchangesrates API and handles the responses. It does not have any attributes, but four methods. The method getCurrencyNames() sends a request to the API to retrieve the list of currency names and then utilizes the private getCurrencyNamesFromResponse() method to extract and transform the names into a list of strings. Similarly, getCurrencyDetail() sends a request to the API to retrieve the currency detail using the name of the chosen initial currency. Then it utilizes the private getCurrencyDetailFromResponse() method to extract and transform the information into a CurrencyDetail object.
+At the heart of CurrCalc we will find three classes CurrencyDetails, ExchangeRate, and ExchangeratesApiClient.<br/> 
+CurrencyDetails holds two public properties, a string called "m_currency" for the name of the currency, and a list of ExchangeRate objects called "m_exchangeRates". The latter leads to a composition relationship from CurrencyDetails to ExchangeRate, which also holds two public properties, a string called "m_currency" for the name of the currency, and a double called "m_rate" for the actual exchange rate.<br/>. CurrencyDetails also has the public "getCurrenciesFromExchangeRates" and "convertAmount" methods. The former uses the m_exchangeRates property to extract all the currency names and pack them into a list which is then returned, wile the latter takes a conversion amount, and the initial and target currencies to perform a conversion using the m_exchangeRates property.<br/>
+Then there is ExchangeratesApiClient. As its name states, it represents the client that sends requests to the exchangesrates API and handles the responses. Its only property is "m_cprWrapper", a pointer to a CprWrapperInterface object, which leads to a composition relationship to the abstract class CprWrapperInterface. This will be explained shortly. The public getDefaultCurrencyDetails() method sends a request to the API to retrieve the currency details of the API's default currency (currently it's EUR). Then it utilizes the private getCurrencyDetailsFromResponse() method, which takes the response body as an argument, to extract and transform the information into a CurrencyDetails object.<br/>
+As mentioned above a ExchangeratesApiClient object has an attribute that points to a CprWrapperInterface object. CprWrapperInterface wraps the Get() method from the cpr library in a virtual method of the same name. Cpr's get method sends GET requests to APIs using a URL and parameters. That is why CprWrapperInterface has the two attributes "m_url" and "m_parameters". Two concrete classes inherit from this abstract one: CprWrapper and MockCprWrapper. CprWrapper implements the inherited Get() method which simply returns the cpr library's Get() method. MockCprWrapper is used for testing purposes to mock GET requests and the responses. This is why CprWrapperInterface mainly exists: to decouple the code and make it more testable for unit tests.
 
 # Activity Diagrams
 
