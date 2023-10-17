@@ -13,6 +13,10 @@ This file contains all the documentation to CurrCalc's software design. This inc
   4.2 **[Use Case Description](#use-case-description)**</br>
 5. **[Class Diagram](#class-diagram)**</br>
 6. **[Activity Diagrams](#activity-diagrams)**</br>
+  6.1 **[Convert Currency](#convert-currency)**</br>
+  6.2 **[getDefaultCurrencyDetails](#getDefaultCurrencyDetails)**</br>
+  6.3 **[getCurrencySelection](#getCurrencySelection)**</br>
+  6.4 **[convertAmount](#convertAmount)**</br>
 
 # Goal
 
@@ -82,12 +86,12 @@ There is only one possible use case when interacting with CurrCalc. The "Convert
 		<td>
 			<ol type="1">
 				<li>CurrCalc prints a welcome message for the user in the terminal.</li>
-				<li>CurrCalc sends an HTTP GET request to the exchangerates API to retrieve Euro currency detail
+				<li>CurrCalc sends an HTTP GET request to the exchangerates API to retrieve default currency details
 					<ol type="i">
-						<li>The API responds with a JSON object containing the currency detail for the Euro currency, including all exchange rates</li>
+						<li>The API responds with a JSON object containing the currency details for the default currency, including all exchange rates</li>
 					</ol>
 				</li>
-				<li>CurrCalc outputs a numbered list of currencies, extracted from the Euro currency detail, and prompts the user to pick one for the initial currency
+				<li>CurrCalc outputs a numbered list of currencies, extracted from the default currency details, and prompts the user to pick one for the initial currency
 					<ol type="i">
 						<li>The user types in the number of the desired initial currency
 							<ol type="a">
@@ -96,7 +100,7 @@ There is only one possible use case when interacting with CurrCalc. The "Convert
 						</li>
 					</ol>
 				</li>
-				<li>CurrCalc outputs a numbered list of currencies, extracted from the Euro currency detail and excluding the initial currency, and prompts the user to pick one for the target currency
+				<li>CurrCalc outputs a numbered list of currencies, extracted from the default currency details and excluding the initial currency, and prompts the user to pick one for the target currency
 					<ol type="i">
 						<li>The user types in the number of the desired target currency
 							<ol type="a">
@@ -191,11 +195,13 @@ There is only one possible use case when interacting with CurrCalc. The "Convert
 ![CurrCalc Class Diagram](https://github.com/DusDus3428/CPP_CurrCalc/blob/feature/01_design/documentation/images/diagrams/03_CurrCalc_ClassDiagram.png "CurrCalc Class Diagram")
 
 At the heart of CurrCalc we will find three classes CurrencyDetails, ExchangeRate, and ExchangeratesApiClient.<br/> 
-CurrencyDetails holds two public properties, a string called "m_currency" for the name of the currency, and a list of ExchangeRate objects called "m_exchangeRates". The latter leads to a composition relationship from CurrencyDetails to ExchangeRate, which also holds two public properties, a string called "m_currency" for the name of the currency, and a double called "m_rate" for the actual exchange rate.<br/>. CurrencyDetails also has the public "getCurrenciesFromExchangeRates" and "convertAmount" methods. The former uses the m_exchangeRates property to extract all the currency names and pack them into a list which is then returned, wile the latter takes a conversion amount, and the initial and target currencies to perform a conversion using the m_exchangeRates property.<br/>
+CurrencyDetails holds two public properties, a string called "m_currency" for the name of the currency, and a list of ExchangeRate objects called "m_exchangeRates". The latter leads to a composition relationship from CurrencyDetails to ExchangeRate, which also holds two public properties, a string called "m_currency" for the name of the currency, and a double called "m_rate" for the actual exchange rate. The public methods "getCurrencies" and "getCurrenciesWithoutInitialCurrency" use the m_exchangeRates property to extract the currency names and pack them into a list which is then returned. The latter just excludes the initial currency from the list. The "convertAmount" method takes a conversion amount, and the initial and target currencies to perform a conversion using the m_exchangeRates property.<br/>
 Then there is ExchangeratesApiClient. As its name states, it represents the client that sends requests to the exchangesrates API and handles the responses. Its only property is "m_cprWrapper", a pointer to a CprWrapperInterface object, which leads to a composition relationship to the abstract class CprWrapperInterface. This will be explained shortly. The public getDefaultCurrencyDetails() method sends a request to the API to retrieve the currency details of the API's default currency (currently it's EUR). Then it utilizes the private getCurrencyDetailsFromResponse() method, which takes the response body as an argument, to extract and transform the information into a CurrencyDetails object.<br/>
 As mentioned above a ExchangeratesApiClient object has an attribute that points to a CprWrapperInterface object. CprWrapperInterface wraps the Get() method from the cpr library in a virtual method of the same name. Cpr's get method sends GET requests to APIs using a URL and parameters. That is why CprWrapperInterface has the two attributes "m_url" and "m_parameters". Two concrete classes inherit from this abstract one: CprWrapper and MockCprWrapper. CprWrapper implements the inherited Get() method which simply returns the cpr library's Get() method. MockCprWrapper is used for testing purposes to mock GET requests and the responses. This is why CprWrapperInterface mainly exists: to decouple the code and make it more testable for unit tests.
 
 # Activity Diagrams
+
+## Convert Currency
 
 ![CurrCalc Activity Diagram for Convert Currency](https://github.com/DusDus3428/CPP_CurrCalc/blob/feature/01_design/documentation/images/diagrams/04_CurrCalc_ActivityDiagram_ConvertCurrency.png "CurrCalc Activity Diagram for Convert Currency")
 
@@ -205,4 +211,14 @@ After the selection has been made, CurrCalc uses it to request the full details 
 Next, the user must choose the target currency from a numbered list. The activity Get Currency Selection is reused here. The only difference is that the numbered list is gathered from the initial currency's exchange rates. This is done for two reasons: on one hand, we do not know if the API has all the exchange rates for the selected initial currency, and on the other, we do not need to include the initial currency.<br/>
 Once this is done, the specified amount will be converted from the initial currency into the target one and the results will be printed to the console. Then the CurrCalc program is terminated. 
 
-Please note that this is a very simplified activity diagram that displays the rough ideal flow of the program. All the possibilities of program termination are not depicted. However, they are described in the use case table **[here](#use-cases)**.
+## getDefaultCurrencyDetails
+
+![CurrCalc Activity Diagram for getDefaultCurrencyDetails](https://github.com/DusDus3428/CPP_CurrCalc/blob/feature/01_design/documentation/images/diagrams/05_CurrCalc_ActivityDiagram_getDefaultCurrencyDetails.png "CurrCalc Activity Diagram for getDefaultCurrencyDetails")
+
+## getCurrencySelection
+
+![CurrCalc Activity Diagram for getCurrencySelection](https://github.com/DusDus3428/CPP_CurrCalc/blob/feature/01_design/documentation/images/diagrams/06_CurrCalc_ActivityDiagram_getCurrencySelection.png "CurrCalc Activity Diagram for getCurrencySelection")
+
+## convertAmount
+
+![CurrCalc Activity Diagram for convertAmount](https://github.com/DusDus3428/CPP_CurrCalc/blob/feature/01_design/documentation/images/diagrams/07_CurrCalc_ActivityDiagram_convertAmount.png "CurrCalc Activity Diagram for convertAmount")
