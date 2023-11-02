@@ -220,7 +220,8 @@ MockCprWrapper just mocks the Get() method for testing purposes. This is why Cpr
 
 # Activity Diagrams
 
-These activity diagrams showcase the flow of CurrCalc on a technical level. Their target audience are therefore software engineers.
+These activity diagrams showcase some of CurrCalc's flow on a technical level. Their target audience are therefore software engineers.
+Not every activity in the program is modeled in a diagram, only the ones that are vital to understanding the overall flow.  
 
 ## Convert Currency
 
@@ -247,6 +248,20 @@ If the response's status code is 200 the response body is used to extract the de
 
 ![CurrCalc Activity Diagram for getCurrencySelection](./images/diagrams/06_CurrCalc_ActivityDiagram_getCurrencySelection.png "CurrCalc Activity Diagram for getCurrencySelection")
 
+The diagram for getCurrencySelection() describes the process in which a user selects a currency. It is referenced in the Convert Currency activity.<br/>
+The flow starts with the ```currencyList``` parameter being passed into the activity by the parent activity. This list is used to print the currencies in a numbered fashion for the user's convenience.<br/>
+The user is then prompted to select a currency by typing in its number. The selection is stored in ```selectedIndex```.<br/>
+If selectedIndex is not on the printed list the user is prompted again to select a currency from the list. If selectedIndex is on the list, it is used to get the currency from the list at that specific index which is then stored in ```selectedCurrency```.<br/>
+The selectedCurrency is then returned to the parent activity.
+
 ## convertAmount
 
 ![CurrCalc Activity Diagram for convertAmount](./images/diagrams/07_CurrCalc_ActivityDiagram_convertAmount.png "CurrCalc Activity Diagram for convertAmount")
+
+The convertAmount() diagram describes the actual currency conversion process. It is also referenced in the Convert Currency activity.<br/>
+The flow starts with the three parameters ```conversionAmount```, ```initialCurrency```, and ```targetCurrency``` being passed into the activity by the parent activity.<br/>
+After this, the conversion approach is determined. Since this activity is part of the ```CurrencyDetails``` class, it can access the ```m_baseCurrency``` property which represents the default currency. This is crucial because the flow depends on the API's default currency (currently EUR). Since a conversion can take place from any available currency three possible approaches must be considered.<br/>
+Option 1: initialCurrency is equal to m_baseCurrency. Since the exchange rates are based on the default currency, conversionAmount must simply be multiplied by the exchange rate for targetCurrency.<br/>
+Option 2: targetCurrency is equal to m_baseCurrency. In this case conversionAmount must be divided by the exchange rate for initialCurrency.<br/>
+Option 3: neither initialCurrency nor targetCurrency are equal to m_baseCurrency. In this case two steps are required. First, conversionAmount is converted to m_baseCurrency by dividing it by the exchange rate for initialCurrency. This is stored in ```defaultCurrencyAmount```. Second, defaultCurrencyAmount is converted to targetCurrency by multiplying it with the exchange rate for targetCurrency.<br/>
+In all of the above cases the result is stored in ```convertedAmount``` which is then returned to the parent activity.
