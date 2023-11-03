@@ -1,6 +1,6 @@
 # Software Design
 
-This file contains all the documentation to CurrCalc's software design. This includes functional requirements, non-functional requirements, and architectural diagrams and their descriptions.
+This file contains all the documentation of CurrCalc's software design. This includes functional requirements, non-functional requirements, and architectural diagrams and their descriptions.
 
 ## Table of Contents
 1. **[Goal](#goal)**</br>
@@ -27,7 +27,7 @@ CurrCalc is a console-based program, written in C++20, that converts an amount o
 ![CurrCalc Rough Overview](./images/diagrams/01_CurrCalc_RoughOverview.png "CurrCalc Rough Overview")
 
 A user interacts with CurrCalc by selecting the initial and target currencies and specifying the conversion amount. 
-CurrCalc requests currency data, like the list of available currencies and exchange rates from the external exchangesrates API. The API responds with a status code and the requested data or, in case of a failure, with just a status code. The REST protocol is used in the communication between CurrCalc and the exchangerates API.
+CurrCalc requests currency data, like the list of available currencies and exchange rates from the external exchangerates API. The API responds with a status code and the requested data or, in case of a failure, with just a status code. The REST protocol is used in the communication between CurrCalc and the exchangerates API.
 
 # Requirements
 
@@ -135,7 +135,7 @@ There is only one possible use case when interacting with CurrCalc. The "Convert
 	<tr>
 		<td>Alternative Flow(s)</td>
 		<td>
-			In 2.i: The API responds with status codes 503
+			In 2.i: The API responds with status code 503
 			<ol type="1">
 				<li>CurrCalc retries the request three more times in intervals of three seconds
 					<ol type="i">
@@ -199,47 +199,47 @@ There is only one possible use case when interacting with CurrCalc. The "Convert
 ![CurrCalc Class Diagram](./images/diagrams/03_CurrCalc_ClassDiagram.png "CurrCalc Class Diagram")
 
 CurrencyDetails:<br/> 
-This class is really the heart of the application as it contains all the data that is processed for the user. It contains three private properties: ```m_baseCurrency``` which represents the name of the currency, a list called ```m_exchangeRates```, and a list called ```m_allCurrencies```.<br/> 
+This class is the heart of the application as it contains all the data that is processed for the user. It contains three private properties: ```m_baseCurrency``` which represents the name of the currency, a list called ```m_exchangeRates```, and a list called ```m_allCurrencies```.<br/> 
 Since ```ExchangeRate``` objects can only exist as part of a ```CurrencyDetails``` object, the m_exchangeRates field leads to a composition relationship from CurrencyDetails to ExchangeRate.<br/>
 m_allCurrencies is a list of all currencies that are extracted from m_exchangeRates during an object's construction.<br/> 
-Usually, getter-methods are not mentioned in class diagrams but the public methods ```getCurrencies()``` and ```getCurrenciesWithoutInitialCurrency()``` are somewhat important. They use m_allCurrencies to return the list of all currencies but latter just excludes the initial currency from the list.<br/> 
+Usually, getter methods are not mentioned in class diagrams but the public methods ```getCurrencies()``` and ```getCurrenciesWithoutInitialCurrency()``` are somewhat important. They use m_allCurrencies to return the list of all currencies but the latter just excludes the initial currency from the list.<br/> 
 The public ```convertAmount()``` method takes a conversion amount, and the initial and target currencies to perform a conversion using m_exchangeRates.<br/>
 
 ExchangeRate:<br/> 
 Only holds two public properties, a string called ```m_currency``` for the name of the currency, and a double called ```m_rate``` for the actual exchange rate.<br/>
 
 ExchangeratesApiClient:<br/>
-As its name states, it represents the client that sends requests to the exchangesrates API and handles the responses. Its only property is ```m_cprWrapper```, a pointer to a ```CprWrapperInterface``` object, which leads to a composition relationship to that class. This will be explained in the next paragraph.<br/>
+As its name states, it represents the client that sends requests to the exchangerates API and handles the responses. Its only property is ```m_cprWrapper```, a pointer to a ```CprWrapperInterface``` object, which leads to a composition relationship to that class. This will be explained in the next paragraph.<br/>
 The public ```getDefaultCurrencyDetails()``` method sends a request to the API to retrieve the currency details of the API's default currency (currently it's EUR). Then it utilizes the private ```getCurrencyDetailsFromResponse()``` method, which takes the response body as an argument, to extract and transform the information into a CurrencyDetails object.<br/>
 
 CprWrapperInterface:<br/> 
-Wraps the ```Get()``` method from the cpr library in a virtual method of the same name. Cpr's Get() method simply sends GET requests to APIs using a URL and parameters. That is why CprWrapperInterface has the two private attributes ```m_url``` and ```m_parameters```.<br/>
+Wraps the ```Get()``` method from the cpr library in a virtual method of the same name. CPR's Get() method simply sends GET requests to APIs using a URL and parameters. That is why CprWrapperInterface has the two private attributes ```m_url``` and ```m_parameters```.<br/>
 Two concrete classes inherit from this abstract one: ```CprWrapper``` and ```MockCprWrapper```.<br/>
 CprWrapper implements the inherited Get() method to make it return the cpr library's Get() method.<br/>
 MockCprWrapper just mocks the Get() method for testing purposes. This is why CprWrapperInterface mainly exists: to decouple the code and make it more testable for unit tests.
 
 # Activity Diagrams
 
-These activity diagrams showcase some of CurrCalc's flow on a technical level. Their target audience are therefore software engineers.
+These activity diagrams showcase some of CurrCalc's flow on a technical level. Their target audience is therefore software engineers.
 Not every activity in the program is modeled in a diagram, only the ones that are vital to understanding the overall flow.  
 
 ## Convert Currency
 
 ![CurrCalc Activity Diagram for Convert Currency](./images/diagrams/04_CurrCalc_ActivityDiagram_ConvertCurrency.png "CurrCalc Activity Diagram for Convert Currency")
 
-The activity diagram above showcases the main flow of the program. That is why is carries the name of the use case described above: Convert Currency<br/> 
-Once CurrCalc is started, it prints a welcome message for the user and creates a ```client``` to connect with the exchangerates API. The client (via ```getDefaultCurrencyDetails()```) then sends a REST request to the API to retrieve the default currency details which is stored in ```defaultCurrencyDetails```.<br/> 
+The activity diagram above showcases the main flow of the program. That is why it carries the name of the use case described above: Convert Currency<br/> 
+Once CurrCalc is started, it prints a welcome message for the user and creates a ```client``` to connect with the exchangerates API. The client (via ```getDefaultCurrencyDetails()```) then sends a REST request to the API to retrieve the default currency details which are stored in ```defaultCurrencyDetails```.<br/> 
 Since defaultCurrencyDetails contains all exchange rates, the list of all currencies is extracted from it and stored in ```currencyList```. This currencyList is then used to get the user's selection for the initial currency which is stored in ```initialCurrency``` (via ```getCurrencySelection()```).<br/> 
 Next, using defaultCurrencyDetails a currency list without the initial currency is stored in ```currencyListWithoutInitialCurrency```. The process mentioned above is then repeated to get the ```targetCurrency``` from the user.<br/>
-The user then specifies the ```conversionAmount``` (via ```getConversionAmount()```) which is used in conjunction with initialCurrency and targetCurrency to perform the actual conversion (via ```convertAmount()```). The results are stored in ```convertedAmount``` and printed out for the user. After this the program terminates. 
+The user then specifies the ```conversionAmount``` (via ```getConversionAmount()```) which is used in conjunction with initialCurrency and targetCurrency to perform the actual conversion (via ```convertAmount()```). The results are stored in ```convertedAmount``` and printed out for the user. After this, the program terminates. 
 
 ## getDefaultCurrencyDetails
 
 ![CurrCalc Activity Diagram for getDefaultCurrencyDetails](./images/diagrams/05_CurrCalc_ActivityDiagram_getDefaultCurrencyDetails.png "CurrCalc Activity Diagram for getDefaultCurrencyDetails")
 
-This activity diagram describes the getDefaultCurrencyDetails() activity referenced in the Convert Currency activity. It details the process of sending a requests to the exchangerates API to retrieve the default currency details.<br/>
+This activity diagram describes the getDefaultCurrencyDetails() activity referenced in the Convert Currency activity. It details the process of sending a request to the exchangerates API to retrieve the default currency details.<br/>
 Once the activity has been invoked by the parent activity, the retry counter for requests, ```retries```, is set to 0. This is necessary to track the amount of retries that have already occurred.<br/>
-After this the request is sent to the API (via ```Get()```). The ```response``` is stored after the API has handled the request and sent the response.<br/>
+After this, the request is sent to the API (via ```Get()```). The ```response``` is stored after the API has handled the request and sent the response.<br/>
 If the response's status code is 503 (service unavailable) and the retry counter is not larger than three, the counter is increased by one and after three seconds the request is repeated. If the counter is larger than three an error message is printed for the user before an exception is thrown, terminating the program.<br/>
 If the response's status code is neither 200 nor 503 an error message is printed for the user before an exception is thrown, terminating the program. No retry is warranted here according to the API's [documentation](https://exchangeratesapi.io/documentation/).<br/>
 If the response's status code is 200 the response body is used to extract the default currency details (via ```getCurrencyDetailsFromResponse()```) which is then stored in ```defaultCurrencyDetails``` and returned to the parent activity.<br/>
@@ -248,7 +248,7 @@ If the response's status code is 200 the response body is used to extract the de
 
 ![CurrCalc Activity Diagram for getCurrencySelection](./images/diagrams/06_CurrCalc_ActivityDiagram_getCurrencySelection.png "CurrCalc Activity Diagram for getCurrencySelection")
 
-The diagram for getCurrencySelection() describes the process in which a user selects a currency. It is referenced in the Convert Currency activity.<br/>
+The diagram for getCurrencySelection() describes the process by which a user selects a currency. It is referenced in the Convert Currency activity.<br/>
 The flow starts with the ```currencyList``` parameter being passed into the activity by the parent activity. This list is used to print the currencies in a numbered fashion for the user's convenience.<br/>
 The user is then prompted to select a currency by typing in its number. The selection is stored in ```selectedIndex```.<br/>
 If selectedIndex is not on the printed list the user is prompted again to select a currency from the list. If selectedIndex is on the list, it is used to get the currency from the list at that specific index which is then stored in ```selectedCurrency```.<br/>
@@ -262,6 +262,6 @@ The convertAmount() diagram describes the actual currency conversion process. It
 The flow starts with the three parameters ```conversionAmount```, ```initialCurrency```, and ```targetCurrency``` being passed into the activity by the parent activity.<br/>
 After this, the conversion approach is determined. Since this activity is part of the ```CurrencyDetails``` class, it can access the ```m_baseCurrency``` property which represents the default currency. This is crucial because the flow depends on the API's default currency (currently EUR). Since a conversion can take place from any available currency three possible approaches must be considered.<br/>
 Option 1: initialCurrency is equal to m_baseCurrency. Since the exchange rates are based on the default currency, conversionAmount must simply be multiplied by the exchange rate for targetCurrency.<br/>
-Option 2: targetCurrency is equal to m_baseCurrency. In this case conversionAmount must be divided by the exchange rate for initialCurrency.<br/>
-Option 3: neither initialCurrency nor targetCurrency are equal to m_baseCurrency. In this case two steps are required. First, conversionAmount is converted to m_baseCurrency by dividing it by the exchange rate for initialCurrency. This is stored in ```defaultCurrencyAmount```. Second, defaultCurrencyAmount is converted to targetCurrency by multiplying it with the exchange rate for targetCurrency.<br/>
-In all of the above cases the result is stored in ```convertedAmount``` which is then returned to the parent activity.
+Option 2: targetCurrency is equal to m_baseCurrency. In this case, conversionAmount must be divided by the exchange rate for initialCurrency.<br/>
+Option 3: neither initialCurrency nor targetCurrency are equal to m_baseCurrency. In this case, two steps are required. First, conversionAmount is converted to m_baseCurrency by dividing it by the exchange rate for initialCurrency. This is stored in ```defaultCurrencyAmount```. Second, defaultCurrencyAmount is converted to targetCurrency by multiplying it with the exchange rate for targetCurrency.<br/>
+In all of the above cases, the result is stored in ```convertedAmount``` which is then returned to the parent activity.
